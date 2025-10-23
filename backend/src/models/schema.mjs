@@ -10,7 +10,7 @@ export const voteEnum = pgEnum("vote_type", ["upvote", "downvote"]);
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: varchar("username", { length: 50 }).notNull().unique(),
-  email: varchar("email", { length: 150 }).notNull().unique(),
+  email: varchar("email", { length: 150 }).notNull(),
   password: varchar("password", { length: 255 }).notNull(),
   name: varchar("name", { length: 100 }).notNull(),
   imageUrl: varchar("image_url", { length: 255 }),
@@ -49,7 +49,7 @@ export const threads = pgTable("threads", {
 
 export const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
-  threadId: integer("thread_id").references(() => threads.id).notNull(),
+  threadId: integer("thread_id").references(() => threads.id,{ onDelete: "cascade" }).notNull(),
   authorId: integer("author_id").references(() => users.id).notNull(),
   parentId: integer("parent_id").references(() => comments.id),
   content: text("content").notNull(),

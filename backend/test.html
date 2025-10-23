@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        div { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        pre { background-color: #eee; padding: 10px; border-radius: 5px; }
+        button { padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+        button:hover { background-color: #0056b3; }
+        .response { margin-top: 10px; }
+        .profile-image { max-width: 100px; max-height: 100px; border-radius: 50%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>API Test Page</h1>
+
+    <h2>Auth Routes</h2>
+    <div>
+        <h3>Register</h3>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="text" id="registerEmail" placeholder="Email">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <input type="text" id="registerName" placeholder="Name">
+        <input type="file" id="registerImageFile" accept="image/*">
+        <button onclick="registerUser()">Register</button>
+        <div id="registerResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Login</h3>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="loginUser()">Login</button>
+        <div id="loginResponse" class="response"></div>
+        <p><strong>Logged in Token:</strong> <span id="loggedInToken"></span></p>
+    </div>
+    <div>
+        <h3>Get User Profile</h3>
+        <button onclick="getUserProfile()">Get Profile</button>
+        <div id="getUserProfileResponse" class="response"></div>
+        <img id="profilePhotoDisplay" class="profile-image" style="display:none;" alt="Profile Photo">
+    </div>
+
+    <h2>Department Routes</h2>
+    <div>
+        <h3>Create Department</h3>
+        <input type="text" id="departmentName" placeholder="Department Name">
+        <input type="text" id="departmentDescription" placeholder="Description">
+        <button onclick="createDepartment()">Create Department</button>
+        <div id="createDepartmentResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>List Departments</h3>
+        <button onclick="listDepartments()">List Departments</button>
+        <div id="listDepartmentsResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Delete Department</h3>
+        <input type="number" id="deleteDepartmentId" placeholder="Department ID">
+        <button onclick="deleteDepartment()">Delete Department</button>
+        <div id="deleteDepartmentResponse" class="response"></div>
+    </div>
+
+    <h2>Thread Routes</h2>
+    <div>
+        <h3>Create Thread</h3>
+        <input type="text" id="threadTitle" placeholder="Title">
+        <textarea id="threadContent" placeholder="Content"></textarea>
+        <input type="number" id="threadCategoryId" placeholder="Category ID (optional)">
+        <input type="number" id="threadDepartmentId" placeholder="Department ID (optional)">
+        <select id="threadVisibility">
+            <option value="public">public</option>
+            <option value="departmental">departmental</option>
+        </select>
+        <button onclick="createThread()">Create Thread</button>
+        <div id="createThreadResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Get All Threads</h3>
+        <button onclick="getAllThreads()">Get Threads</button>
+        <div id="getAllThreadsResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Get Thread by ID</h3>
+        <input type="number" id="getThreadId" placeholder="Thread ID">
+        <button onclick="getThreadById()">Get Thread</button>
+        <div id="getThreadByIdResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Update Thread</h3>
+        <input type="number" id="updateThreadId" placeholder="Thread ID">
+        <input type="text" id="updateThreadTitle" placeholder="New Title">
+        <textarea id="updateThreadContent" placeholder="New Content"></textarea>
+        <button onclick="updateThread()">Update Thread</button>
+        <div id="updateThreadResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Delete Thread</h3>
+        <input type="number" id="deleteThreadId" placeholder="Thread ID">
+        <button onclick="deleteThread()">Delete Thread</button>
+        <div id="deleteThreadResponse" class="response"></div>
+    </div>
+
+    <h2>Comment Routes</h2>
+    <div>
+        <h3>Create Comment</h3>
+        <input type="number" id="commentThreadId" placeholder="Thread ID">
+        <input type="number" id="commentParentId" placeholder="Parent Comment ID (optional)">
+        <textarea id="commentContent" placeholder="Comment Content"></textarea>
+        <button onclick="handleCreateComment()">Create Comment</button>
+        <div id="createCommentResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Get Comments by Thread ID</h3>
+        <input type="number" id="getCommentsByThreadIdInput" placeholder="Thread ID">
+        <button onclick="getCommentsByThreadId()">Get Comments</button>
+        <div id="getCommentsByThreadIdResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Update Comment</h3>
+        <input type="number" id="updateCommentId" placeholder="Comment ID">
+        <textarea id="updateCommentContent" placeholder="New Comment Content"></textarea>
+        <button onclick="updateComment()">Update Comment</button>
+        <div id="updateCommentResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Delete Comment</h3>
+        <input type="number" id="deleteCommentId" placeholder="Comment ID">
+        <button onclick="deleteComment()">Delete Comment</button>
+        <div id="deleteCommentResponse" class="response"></div>
+    </div>
+
+    <h2>Vote Routes</h2>
+    <div>
+        <h3>Create Vote</h3>
+        <input type="number" id="voteThreadId" placeholder="Thread ID (optional)">
+        <input type="number" id="voteCommentId" placeholder="Comment ID (optional)">
+        <select id="voteType">
+            <option value="upvote">upvote</option>
+            <option value="downvote">downvote</option>
+        </select>
+        <button onclick="createVote()">Create Vote</button>
+        <div id="createVoteResponse" class="response"></div>
+    </div>
+    <div>
+        <h3>Delete Vote</h3>
+        <input type="number" id="deleteVoteId" placeholder="Vote ID">
+        <button onclick="deleteVote()">Delete Vote</button>
+        <div id="deleteVoteResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+        let authToken = '';
+
+        function displayResponse(elementId, data, error = false) {
+            const responseDiv = document.getElementById(elementId);
+            responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            responseDiv.style.color = error ? 'red' : 'green';
+        }
+
+        async function makeRequest(method, url, body = null, authRequired = false, contentType = 'application/json') {
+            const headers = { 'Content-Type': contentType };
+            if (authRequired && authToken) {
+                headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${url}`, {
+                    method,
+                    headers,
+                    body: body ? (contentType === 'application/json' ? JSON.stringify(body) : body) : null,
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || data || 'Something went wrong');
+                }
+                return data;
+            } catch (error) {
+                console.error('Request failed:', error);
+                console.error('Full error object:', JSON.parse(JSON.stringify(error))); // Log full error object
+                throw error;
+            }
+        }
+
+        async function uploadAvatar(file) {
+            try {
+                // 1. Get a signed upload URL and filename from the backend
+                const imageType = file.type.split('/')[1]; // e.g., 'jpeg', 'png'
+                const signedUrlResponse = await makeRequest('POST', '/avatar', { imageType }, true);
+                const { url: signedUrl, filename } = signedUrlResponse;
+
+                // 2. Upload the actual image file to Supabase using the signed URL
+                await fetch(signedUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': file.type,
+                    },
+                    body: file,
+                });
+
+                // 3. Return the filename (Supabase path) to be used in register/updateProfile
+                return filename;
+            } catch (error) {
+                console.error('Avatar upload failed:', error);
+                throw error;
+            }
+        }
+
+        // Auth Functions
+        async function registerUser() {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const name = document.getElementById('registerName').value;
+            const imageFile = document.getElementById('registerImageFile').files[0];
+
+            let imageUrl = null; // This will now be the filename/path, not the full URL
+            if (imageFile) {
+                imageUrl = await uploadAvatar(imageFile);
+            }
+
+            const body = { username, email, password, name };
+            if (imageUrl) body.image_url = imageUrl; // Use image_url as expected by backend
+
+            try {
+                const data = await makeRequest('POST', '/signup', body);
+                displayResponse('registerResponse', data);
+            } catch (error) {
+                displayResponse('registerResponse', { error: error.message }, true);
+            }
+        }
+
+        async function loginUser() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            try {
+                const data = await makeRequest('POST', '/login', { username, password });
+                authToken = data.token; // Store the token
+                document.getElementById('loggedInToken').textContent = authToken;
+                displayResponse('loginResponse', data);
+            } catch (error) {
+                displayResponse('loginResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getUserProfile() {
+            try {
+                const data = await makeRequest('GET', '/profile', null, true);
+                displayResponse('getUserProfileResponse', data);
+                const profilePhotoDisplay = document.getElementById('profilePhotoDisplay');
+                if (data.imageUrl) {
+                    profilePhotoDisplay.src = data.imageUrl;
+                    profilePhotoDisplay.style.display = 'block';
+                } else {
+                    profilePhotoDisplay.style.display = 'none';
+                }
+            } catch (error) {
+                displayResponse('getUserProfileResponse', { error: error.message }, true);
+                document.getElementById('profilePhotoDisplay').style.display = 'none';
+            }
+        }
+
+        // Department Functions
+        async function createDepartment() {
+            const name = document.getElementById('departmentName').value;
+            const description = document.getElementById('departmentDescription').value;
+            try {
+                const data = await makeRequest('POST', '/department', { name, descripiton: description }, true);
+                displayResponse('createDepartmentResponse', data);
+            } catch (error) {
+                displayResponse('createDepartmentResponse', { error: error.message }, true);
+            }
+        }
+
+        async function listDepartments() {
+            try {
+                const data = await makeRequest('GET', '/department', null, true);
+                displayResponse('listDepartmentsResponse', data);
+            }
+            catch (error) {
+                displayResponse('listDepartmentsResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteDepartment() {
+            const id = document.getElementById('deleteDepartmentId').value;
+            try {
+                const data = await makeRequest('DELETE', '/department', { id: parseInt(id) }, true);
+                displayResponse('deleteDepartmentResponse', data);
+            } catch (error) {
+                displayResponse('deleteDepartmentResponse', { error: error.message }, true);
+            }
+        }
+
+        // Thread Functions
+        async function createThread() {
+            const title = document.getElementById('threadTitle').value;
+            const content = document.getElementById('threadContent').value;
+            const categoryId = document.getElementById('threadCategoryId').value;
+            const departmentId = document.getElementById('threadDepartmentId').value;
+            const visibility = document.getElementById('threadVisibility').value;
+            const body = { title, content, visibility };
+            if (categoryId) body.categoryId = parseInt(categoryId);
+            if (departmentId) body.departmentId = parseInt(departmentId);
+
+            try {
+                const data = await makeRequest('POST', '/threads', body, true);
+                displayResponse('createThreadResponse', data);
+            } catch (error) {
+                displayResponse('createThreadResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getAllThreads() {
+            try {
+                const data = await makeRequest('GET', '/threads');
+                displayResponse('getAllThreadsResponse', data);
+            } catch (error) {
+                displayResponse('getAllThreadsResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getThreadById() {
+            const id = document.getElementById('getThreadId').value;
+            try {
+                const data = await makeRequest('GET', `/threads/${id}`);
+                displayResponse('getThreadByIdResponse', data);
+            } catch (error) {
+                displayResponse('getThreadByIdResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateThread() {
+            const id = document.getElementById('updateThreadId').value;
+            const title = document.getElementById('updateThreadTitle').value;
+            const content = document.getElementById('updateThreadContent').value;
+            const body = {};
+            if (title) body.title = title;
+            if (content) body.content = content;
+
+            try {
+                const data = await makeRequest('PUT', `/threads/${id}`, body, true);
+                displayResponse('updateThreadResponse', data);
+            } catch (error) {
+                displayResponse('updateThreadResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteThread() {
+            const id = document.getElementById('deleteThreadId').value;
+            try {
+                const data = await makeRequest('DELETE', `/threads/${id}`, null, true);
+                displayResponse('deleteThreadResponse', data);
+            } catch (error) {
+                displayResponse('deleteThreadResponse', { error: error.message }, true);
+            }
+        }
+
+        // Comment Functions
+        async function handleCreateComment() {
+            const threadId = document.getElementById('commentThreadId').value;
+            const parentId = document.getElementById('commentParentId').value;
+            const content = document.getElementById('commentContent').value;
+            const body = { threadId: parseInt(threadId), content };
+            if (parentId) body.parentId = parseInt(parentId);
+
+            try {
+                const data = await makeRequest('POST', '/comments', body, true);
+                displayResponse('createCommentResponse', data);
+            }
+            catch (error) {
+                displayResponse('createCommentResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getCommentsByThreadId() {
+            const threadId = document.getElementById('getCommentsByThreadIdInput').value;
+            console.log('Attempting to fetch comments for threadId:', threadId); // Log threadId
+            try {
+                const data = await makeRequest('GET', `/threads/${threadId}/comments`);
+                displayResponse('getCommentsByThreadIdResponse', data);
+            } catch (error) {
+                displayResponse('getCommentsByThreadIdResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateComment() {
+            const id = document.getElementById('updateCommentId').value;
+            const content = document.getElementById('updateCommentContent').value;
+            try {
+                const data = await makeRequest('PUT', `/comments/${id}`, { content }, true);
+                displayResponse('updateCommentResponse', data);
+            } catch (error) {
+                displayResponse('updateCommentResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteComment() {
+            const id = document.getElementById('deleteCommentId').value;
+            try {
+                const data = await makeRequest('DELETE', `/comments/${id}`, null, true);
+                displayResponse('deleteCommentResponse', data);
+            } catch (error) {
+                displayResponse('deleteCommentResponse', { error: error.message }, true);
+            }
+        }
+
+        // Vote Functions
+        async function createVote() {
+            const threadId = document.getElementById('voteThreadId').value;
+            const commentId = document.getElementById('voteCommentId').value;
+            const type = document.getElementById('voteType').value;
+            const body = { type };
+            if (threadId) body.threadId = parseInt(threadId);
+            if (commentId) body.commentId = parseInt(commentId);
+
+            try {
+                const data = await makeRequest('POST', '/votes', body, true);
+                displayResponse('createVoteResponse', data);
+            } catch (error) {
+                displayResponse('createVoteResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteVote() {
+            const id = document.getElementById('deleteVoteId').value;
+            try {
+                const data = await makeRequest('DELETE', `/votes/${id}`, null, true);
+                displayResponse('deleteVoteResponse', data);
+            } catch (error) {
+                displayResponse('deleteVoteResponse', { error: error.message }, true);
+            }
+        }
+
+    </script>
+</body>
+</html>
