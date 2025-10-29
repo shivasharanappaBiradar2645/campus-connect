@@ -1,8 +1,17 @@
 import {ArrowBigUp, ArrowBigDown, MessageCircle} from "lucide-react"
+import {Ellipsis} from 'lucide-react';
+import {Trash} from 'lucide-react';
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import {Button} from "@/components/ui/button";
 
-export default function Posts({post, comments}) {
+export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
     const BASE = 'http://localhost:3000'
     const [postComments, setPostComments] = useState([]);
     const [voteCount, setVoteCount] = useState(0);
@@ -35,7 +44,7 @@ export default function Posts({post, comments}) {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({threadId: Id, type:"upvote"})
+                body: JSON.stringify({threadId: Id, type: "upvote"})
             })
             const data = await res.json()
 
@@ -80,6 +89,29 @@ export default function Posts({post, comments}) {
         }
     }
 
+    async function handleDeletePost(threadId) {
+        try {
+            const res = await fetch(`${BASE}/threads/${threadId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+            })
+            const data = await res.json()
+
+            if (res.ok) {
+                console.log(data);
+                setFetchPosts(!fetchPosts)
+            } else {
+                console.error(data);
+            }
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     useEffect(() => {
         const storedToken = localStorage.getItem("authToken");
         if (!storedToken) {
@@ -112,13 +144,28 @@ export default function Posts({post, comments}) {
     return (
         <div
             className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
-            <div>
-                {/*main content*/}
+            <div className="flex flex-row justify-between items-center">
                 <h1 className="text-xl font-semibold mb-2">{post.title}</h1>
-                <p className="text-gray-700 leading-relaxed">
-                    {post.content}
-                </p>
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Ellipsis className="h-5 w-5"/>
+                        </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem className={"bg-red-400"} onClick={() => handleDeletePost(post.id)}>
+                            <Trash color={"black"}/> Delete
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Share</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
+            <p className="text-gray-700 leading-relaxed">
+                {post.content}
+            </p>
 
             {/*actions*/}
             <div className="flex justify-between items-center mt-4 text-gray-600">

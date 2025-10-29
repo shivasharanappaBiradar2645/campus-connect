@@ -14,7 +14,7 @@ export default function HomePage() {
     const BASE = 'http://localhost:3000'
     const [postData, setPostData] = useState([])
     const [comments, setComments] = useState([])
-
+    const [fetchPosts, setFetchPosts] = useState(true)
     function TopBarHome() {
         return (
             <div className="h-fit flex justify-between items-center px-4 py-2 border-b border-gray-300">
@@ -64,7 +64,7 @@ export default function HomePage() {
         }
 
         fetchPost()
-    }, [])
+    }, [fetchPosts])
 
     useEffect(() => {
         if (postData.length === 0) return
@@ -104,7 +104,7 @@ export default function HomePage() {
 
             <div className="overflow-y-scroll flex flex-col">
                 {postData.map((post, index) => (
-                    <Posts post={post} key={index} comments={comments} />
+                    <Posts post={post} key={index} comments={comments} fetchPosts={fetchPosts} setFetchPosts={setFetchPosts} />
                 ))}
             </div>
 
