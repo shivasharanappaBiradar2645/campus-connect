@@ -7,6 +7,7 @@ export default function Posts({post, comments}) {
     const [postComments, setPostComments] = useState([]);
     const [voteCount, setVoteCount] = useState(0);
     const [token, setToken] = useState("");
+    const [reFetch, setReFetch] = useState(true);
     const navigate = useNavigate();
 
     async function fetchVoteCount(Id) {
@@ -34,12 +35,13 @@ export default function Posts({post, comments}) {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({threadId: Id})
+                body: JSON.stringify({threadId: Id, type:"upvote"})
             })
             const data = await res.json()
 
             if (res.ok) {
                 console.log(data);
+                setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()
                 navigate("/auth")
@@ -65,6 +67,7 @@ export default function Posts({post, comments}) {
 
             if (res.ok) {
                 console.log(data);
+                setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()
                 navigate("/auth")
@@ -95,7 +98,7 @@ export default function Posts({post, comments}) {
 
     useEffect(() => {
         fetchVoteCount(post.id)
-    }, [post])
+    }, [post, reFetch])
 
     // console.log("postComments:", postComments);
     useEffect(() => {

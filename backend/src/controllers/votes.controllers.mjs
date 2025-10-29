@@ -1,6 +1,6 @@
 import { db } from "../models/db.mjs";
 import { voteEnum, votes } from "../models/schema.mjs";
-import { eq, and,count } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export const createVote = async (req, res) => {
   try {
