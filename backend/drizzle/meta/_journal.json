@@ -15,6 +15,13 @@
       "when": 1761203735357,
       "tag": "0001_silky_nightmare",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761739567996,
+      "tag": "0002_illegal_spectrum",
+      "breakpoints": true
     }
   ]
 }
