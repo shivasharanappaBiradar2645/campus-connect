@@ -2,7 +2,26 @@ import {ArrowBigUp, ArrowBigDown, MessageCircle} from "lucide-react"
 import {useEffect, useState} from "react";
 
 export default function Posts({post, comments}) {
+    const BASE = 'http://localhost:3000'
     const [postComments, setPostComments] = useState([]);
+    const [voteCount, setVoteCount] = useState(0);
+
+    async function fetchVoteCount(Id) {
+        try {
+            const res = await fetch(`${BASE}/votes/${Id}`, {
+                method: "GET",
+                headers: {"Content-Type": "application/json"},
+            })
+            const data = await res.json()
+            if (res.ok) {
+                setVoteCount(data.downvote - data.upvote)
+            } else {
+                console.error(data)
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
     useEffect(() => {
         if (!comments || comments.length === 0) return;
@@ -11,7 +30,15 @@ export default function Posts({post, comments}) {
         setPostComments(filtered);
     }, [comments, post]);
 
+    useEffect(() => {
+        fetchVoteCount(post.id)
+    }, [post])
+
     // console.log("postComments:", postComments);
+
+    useEffect(() => {
+        console.log("vote: " + voteCount)
+    }, [voteCount]);
 
     return (
         <div
@@ -31,6 +58,7 @@ export default function Posts({post, comments}) {
                     <button className="hover:text-blue-600 transition-colors">
                         <ArrowBigUp className="w-6 h-6"/>
                     </button>
+                    <h1>{voteCount}</h1>
                     <button className="hover:text-red-500 transition-colors">
                         <ArrowBigDown className="w-6 h-6"/>
                     </button>

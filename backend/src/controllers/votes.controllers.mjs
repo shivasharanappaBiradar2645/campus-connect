@@ -1,6 +1,6 @@
 import { db } from "../models/db.mjs";
 import { voteEnum, votes } from "../models/schema.mjs";
-import { eq, and } from "drizzle-orm";
+import { eq, and,count } from "drizzle-orm";
 
 export const createVote = async (req, res) => {
   try {
@@ -68,12 +68,12 @@ export const deleteVote = async (req, res) => {
 export const countVote = async (req,res) => {
   try{
     const { id } = req.params;
-    const upvotes = await db.$count(votes,and(eq(vote.threadId,id),eq(vote.type, voteEnum.upvotes)));
+    const upvote = await db.$count(votes,and(eq(votes.threadId,id),eq(votes.type, voteEnum.upvote)));
     const downvote = await db.$count(votes, and(eq(votes.threadId,id),eq(votes.type,voteEnum.downvote)));
-    res.json({upvotes: upvotes, downvote: downvote});
+    res.json({upvote: upvote, downvote: downvote});
 
 
   }catch (e){
-    res.status(500).json({error: e})
+    res.status(500).json({error: e.message})
   }
 }
