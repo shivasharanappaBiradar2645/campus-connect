@@ -88,9 +88,14 @@ export default function HomePage() {
         fetchCommentsForAll()
     }, [postData])
 
+
+    //TODO remove after testing
     useEffect(() => {
         console.log(comments)
     }, [comments])
+    useEffect(() => {
+        console.log(postData)
+    }, [postData])
 
     return (
         <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
@@ -104,6 +109,5 @@ export default function HomePage() {
 
             <MobileNav />
         </div>
-
     )
 }
