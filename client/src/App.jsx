@@ -1,15 +1,19 @@
-import './index.css'
+import {Routes, Route, Navigate} from "react-router-dom";
+import HomePage from "@/pages/Home.jsx";
 import ProfilePage from "@/pages/Profile.jsx";
-
 import Auth from "@/pages/Auth.jsx";
+import './index.css'
 
-function App() {
 
+export default function App() {
     return (
-        <Auth/>
-        // <ProfilePage/>
-        // <HomePage/>
-    )
-}
+        <Routes>
+            <Route path="/auth" element={<Auth/>}/>
 
-export default App
+            <Route path="/" element={<HomePage/>}/>
+            <Route path="/profile" element={<ProfilePage/>}/>
+
+            <Route path="*" element={<Navigate to="/"/>}/>
+        </Routes>
+    );
+}

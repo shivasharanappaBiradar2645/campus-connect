@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
 
 export default function Auth() {
+    const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
         fullName: '',
@@ -45,17 +47,17 @@ export default function Auth() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                body: JSON.stringify({ imageType })
+                body: JSON.stringify({imageType})
             });
 
             const signedUrlData = await signedUrlResponse.json();
             if (!signedUrlResponse.ok) throw new Error(signedUrlData.error || 'Failed to get upload URL');
 
-            const { url: signedUrl, filename } = signedUrlData;
+            const {url: signedUrl, filename} = signedUrlData;
 
             await fetch(signedUrl, {
                 method: 'PUT',
-                headers: { 'Content-Type': file.type },
+                headers: {'Content-Type': file.type},
                 body: file
             });
 
@@ -76,7 +78,7 @@ export default function Auth() {
             if (isLogin) {
                 const response = await fetch(`${API_BASE_URL}/login`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         username: formData.username,
                         password: formData.password
@@ -86,6 +88,7 @@ export default function Auth() {
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Login failed');
 
+                localStorage.clear();
                 localStorage.setItem('authToken', data.token);
                 setSuccess('Login successful!');
 
@@ -114,7 +117,7 @@ export default function Auth() {
 
                 const response = await fetch(`${API_BASE_URL}/signup`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(body)
                 });
 
@@ -140,6 +143,11 @@ export default function Auth() {
             setLoading(false);
         }
     };
+
+
+    useEffect(() => {
+        localStorage.getItem('authToken') ? navigate("/") : null;
+    }, [navigate]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
@@ -236,7 +244,8 @@ export default function Auth() {
                                     Upload Profile Picture (optional)
                                 </label>
                                 <div className="flex flex-col items-center gap-3">
-                                    <div className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-gray-200 shadow-sm hover:shadow-md transition">
+                                    <div
+                                        className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-gray-200 shadow-sm hover:shadow-md transition">
                                         {imagePreview ? (
                                             <img
                                                 src={imagePreview}
@@ -244,7 +253,8 @@ export default function Auth() {
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
+                                            <div
+                                                className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400">
                                                 <svg
                                                     className="w-10 h-10"
                                                     fill="none"
@@ -263,7 +273,8 @@ export default function Auth() {
                                     </div>
 
                                     <label className="cursor-pointer">
-                    <span className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-900 transition font-medium">
+                    <span
+                        className="px-4 py-2 bg-gray-800 text-white text-sm rounded-lg hover:bg-gray-900 transition font-medium">
                       Choose Image
                     </span>
                                         <input
