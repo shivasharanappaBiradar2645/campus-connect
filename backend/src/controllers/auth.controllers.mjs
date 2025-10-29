@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { users } from "../models/schema.mjs";
+import { comments, threads, users, votes } from "../models/schema.mjs";
 import { db } from "../models/db.mjs";
 import { eq } from "drizzle-orm";
 import { JWT_SECRET_KEY } from "../config.mjs";
+import { supabase } from "./avatar.upload.mjs";
 
 export const login = async (req, res) => {
   try {
@@ -26,8 +27,9 @@ export const login = async (req, res) => {
     if (!match) {
       return res.status(400).json({ error: "Invalid password" });
     }
+    delete currentUser.password;
 
-    const token = jwt.sign(currentUser,
+    const token = jwt.sign({id:currentUser.id},
       JWT_SECRET_KEY,
       { expiresIn: "1d" }
     );
@@ -53,19 +55,68 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (image_url){
+      var {data} = supabase.storage.from('avatars').getPublicUrl(image_url);
+
+    }
 
     await db.insert(users).values({
       username,
       email,
       name,
       password: hashedPassword,
-      imageUrl: image_url || null,
+      imageUrl: data.publicUrl || null,
       departmentId: department_id || null,
     });
 
     res.status(201).json({ message: "User created successfully" });
   } catch (e) {
     console.error("Registration error:", e);
+    res.status(500).json({ error: e});
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userProfile = await db.select().from(users).where(eq(users.id, userId));
+
+    if (userProfile.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const { password, ...userWithoutPassword } = userProfile[0];
+
+    res.status(200).json(userWithoutPassword);
+  } catch (e) {
+    console.error("Get user profile error:", e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+export const getUserProfileExtended = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userProfile = await db.select().from(users).where(eq(users.id, userId));
+
+    if (userProfile.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const { password, ...userWithoutPassword } = userProfile[0];
+    const allthreads = await db.select().from(threads).where(eq(threads.authorId. userId));
+    const allcomments = await db.select().from(comments).where(eq(comments.authorId,userId));
+    const allvotes = await db.select().from(votes).where(eq(votes.authorId,userId));
+
+    res.status(200).json({
+      profile: userWithoutPassword,
+      thread: allthreads,
+      vote: allvotes,
+      comment: allcomments,
+    });
+  } catch (e) {
+    console.error("Get user profile error:", e);
     res.status(500).json({ error: "Internal server error" });
   }
 };

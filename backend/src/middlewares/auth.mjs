@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../config.mjs";
 import { db } from "../models/db.mjs";
 import { users } from "../models/schema.mjs";
+import { eq } from "drizzle-orm";
 
 async function authenticateToken(req, res, next){
   try {
@@ -18,10 +19,12 @@ async function authenticateToken(req, res, next){
         return res.status(403).json({ error: "Invalid or expired token." });
       }
 
-    const user = await db.select().from(users).where(eq(users.id,token.id));
+    const user = await db.select().from(users).where(eq(users.id,decoded.id));
+    if (user.length <1 ){return res.status(500).send("error user not found");}
     if (user[0].status != "active"){
         return res.status(404).json({error: "user is not valid"})
     }
+    req.user = user[0];
       
 
       next();
