@@ -16,7 +16,7 @@ export default function Auth() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-
+    const [token, setToken] = useState("");
     const API_BASE_URL = 'http://localhost:3000';
 
     const handleInputChange = (e) => {
@@ -99,6 +99,8 @@ export default function Auth() {
                     password: '',
                     confirmPassword: ''
                 });
+
+                navigate('/');
             } else {
                 if (formData.password !== formData.confirmPassword) throw new Error('Passwords do not match');
                 if (formData.password.length < 8) throw new Error('Password must be at least 8 characters long');
@@ -144,10 +146,17 @@ export default function Auth() {
         }
     };
 
+    useEffect(() => {
+        setToken(localStorage.getItem("authToken"));
+
+        if (token) {
+            navigate('/');
+        }
+    }, [navigate]);
 
     useEffect(() => {
-        localStorage.getItem('authToken') ? navigate("/") : null;
-    }, [navigate]);
+        console.log("token: "+token);
+    }, [token]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">

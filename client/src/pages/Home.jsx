@@ -90,12 +90,13 @@ export default function HomePage() {
 
 
     //TODO remove after testing
-    useEffect(() => {
-        console.log(comments)
-    }, [comments])
-    useEffect(() => {
-        console.log(postData)
-    }, [postData])
+
+    // useEffect(() => {
+    //     console.log(comments)
+    // }, [comments])
+    // useEffect(() => {
+    //     console.log(postData)
+    // }, [postData])
 
     return (
         <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
