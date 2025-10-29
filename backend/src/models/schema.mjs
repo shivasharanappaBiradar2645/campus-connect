@@ -51,7 +51,7 @@ export const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
   threadId: integer("thread_id").references(() => threads.id,{ onDelete: "cascade" }).notNull(),
   authorId: integer("author_id").references(() => users.id).notNull(),
-  parentId: integer("parent_id").references(() => comments.id),
+  parentId: integer("parent_id"),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
