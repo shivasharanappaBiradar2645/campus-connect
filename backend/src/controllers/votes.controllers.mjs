@@ -1,5 +1,5 @@
 import { db } from "../models/db.mjs";
-import { votes } from "../models/schema.mjs";
+import { voteEnum, votes } from "../models/schema.mjs";
 import { eq, and } from "drizzle-orm";
 
 export const createVote = async (req, res) => {
@@ -61,6 +61,19 @@ export const deleteVote = async (req, res) => {
     res.status(200).json({ message: "Vote deleted successfully" });
   } catch (e) {
     console.error("Delete vote error:", e);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: e});
   }
 };
+
+export const countVote = async (req,res) => {
+  try{
+    const { id } = req.params;
+    const upvotes = await db.$count(votes,and(eq(vote.threadId,id),eq(vote.type, voteEnum.upvotes)));
+    const downvote = await db.$count(votes, and(eq(votes.threadId,id),eq(votes.type,voteEnum.downvote)));
+    res.json({upvotes: upvotes, downvote: downvote});
+
+
+  }catch (e){
+    res.status(500).json({error: e})
+  }
+}
