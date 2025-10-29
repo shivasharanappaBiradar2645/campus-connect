@@ -1,4 +1,5 @@
-import {Bell, MessageCircle, Search, ChevronDown} from "lucide-react";
+import {useEffect, useState} from "react"
+import {Bell, MessageCircle, Search, ChevronDown} from "lucide-react"
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -6,15 +7,17 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
 import {Button} from "@/components/ui/button"
-import MobileNav from "@/components/Dock.jsx";
-
+import MobileNav from "@/components/Dock.jsx"
+import Posts from "@/components/Posts.jsx"
 
 export default function HomePage() {
+    const BASE = 'http://localhost:3000'
+    const [postData, setPostData] = useState([])
+    const [comments, setComments] = useState([])
 
     function TopBarHome() {
         return (
             <div className="h-fit flex justify-between items-center px-4 py-2 border-b border-gray-300">
-                {/* Dropdown Section */}
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="text-lg font-semibold">
@@ -27,29 +30,80 @@ export default function HomePage() {
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {/* Icons Section */}
                 <div className="flex gap-4 items-center">
                     <Button variant="outline" size="icon-lg">
-                        <Search className="cursor-pointer"/>
+                        <Search/>
                     </Button>
                     <Button variant="outline" size="icon-lg">
-                        <MessageCircle className="cursor-pointer"/>
+                        <MessageCircle/>
                     </Button>
                     <Button variant="outline" size="icon-lg">
-                        <Bell className="cursor-pointer"/>
+                        <Bell/>
                     </Button>
                 </div>
             </div>
         )
     }
 
-    return (
-        <div className={"grid grid-cols-1 min-h-screen"}>
-            <TopBarHome/>
-            <div className={"border-1 border-red"}>
+    useEffect(() => {
+        async function fetchPost() {
+            try {
+                const res = await fetch(`${BASE}/threads`, {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"},
+                })
+                const data = await res.json()
+                if (res.ok) {
+                    setPostData(data)
+                } else {
+                    console.log(data)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
 
+        fetchPost()
+    }, [])
+
+    useEffect(() => {
+        if (postData.length === 0) return
+
+        async function fetchCommentsForAll() {
+            try {
+                const results = await Promise.all(
+                    postData.map((post) =>
+                        fetch(`${BASE}/threads/${post.id}/comments`, {
+                            method: "GET",
+                            headers: {"Content-Type": "application/json"},
+                        }).then((r) => r.json())
+                    )
+                )
+                setComments(results)
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        fetchCommentsForAll()
+    }, [postData])
+
+    useEffect(() => {
+        console.log(comments)
+    }, [comments])
+
+    return (
+        <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
+            <TopBarHome />
+
+            <div className="overflow-y-scroll flex flex-col">
+                {postData.map((post, index) => (
+                    <Posts post={post} key={index} comments={comments} />
+                ))}
             </div>
-            <MobileNav/>
+
+            <MobileNav />
         </div>
+
     )
 }
