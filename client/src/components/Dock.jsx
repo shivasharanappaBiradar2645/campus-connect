@@ -1,14 +1,20 @@
 import {Button} from "@/components/ui/button.jsx";
 import {Home, PlusCircle, User} from "lucide-react";
+import {useNavigate} from "react-router-dom";
 
 export default function MobileNav() {
+    const navigate = useNavigate();
     return (
-        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-300 bg-white flex justify-around items-center  z-50">
+        <div
+            className="fixed bottom-0 left-0 right-0 border-t border-gray-300 bg-white flex justify-around items-center  z-50">
             <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 p-2 h-auto w-auto"
+                onClick={() => {
+                    navigate("/")
+                }}
             >
-                <Home className="w-10 h-10" />
+                <Home className="w-10 h-10"/>
                 <span className="text-base font-semibold">Home</span>
             </Button>
 
@@ -16,15 +22,18 @@ export default function MobileNav() {
                 variant="ghost"
                 className="flex flex-col items-center gap-1 p-2 h-auto w-auto"
             >
-                <PlusCircle className="w-12 h-12" />
+                <PlusCircle className="w-12 h-12"/>
                 <span className="text-base font-semibold">Create</span>
             </Button>
 
             <Button
                 variant="ghost"
                 className="flex flex-col items-center gap-1 p-2 h-auto w-auto"
+                onClick={() => {
+                    navigate("/profile")
+                }}
             >
-                <User className="w-10 h-10" />
+                <User className="w-10 h-10"/>
                 <span className="text-base font-semibold">Profile</span>
             </Button>
         </div>
