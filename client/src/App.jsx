@@ -1,15 +1,15 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './index.css'
+import HomePage from "@/pages/Home.jsx";
 
 function App() {
 
-  return (
-    <>
-        <h1 className={"bg-black"}>Tailwind Test</h1>
-    </>
-  )
+    return (
+
+        <HomePage/>
+    )
 }
 
 export default App
