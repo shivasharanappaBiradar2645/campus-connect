@@ -13,6 +13,7 @@ const BASE = 'http://localhost:3000'
 import Posts from "@/components/Posts.jsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import Comments from "@/components/Comments.jsx";
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -140,8 +141,8 @@ export default function ProfilePage() {
 
                             {userData?.thread.length === 0
                                 ? <p className="text-gray-500">Wow so empty</p>
-                                : userData?.thread?.map((item) => (
-                                    <Posts post={item} />
+                                : userData?.thread?.map((item, index) => (
+                                    <Posts post={item} key={index}/>
                                 ))
                             }
 
@@ -151,7 +152,9 @@ export default function ProfilePage() {
                             {/*Render comments */}
                             {userData?.comment.length === 0
                                 ? <p className="text-gray-500">No comments yet.</p>
-                                : <h1>you have comments</h1>
+                                : userData?.comment?.map((item, index) => (
+                                    <Comments comment={item} key={index} username={userData?.profile?.username} userImg={userData?.profile?.imageUrl}/>
+                                ))
                             }
                         </TabsContent>
 
