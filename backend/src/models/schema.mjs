@@ -51,7 +51,7 @@ export const comments = pgTable("comments", {
   id: serial("id").primaryKey(),
   threadId: integer("thread_id").references(() => threads.id,{ onDelete: "cascade" }).notNull(),
   authorId: integer("author_id").references(() => users.id).notNull(),
-  parentId: integer("parent_id"),
+  parentId: integer("parent_id").references(() => comments.id),
   content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -59,11 +59,9 @@ export const comments = pgTable("comments", {
 
 export const votes = pgTable("votes", {
   id: serial("id").primaryKey(),
-  threadId: integer("thread_id").references(() => threads.id),
-  commentId: integer("comment_id").references(() => comments.id),
+  threadId: integer("thread_id").references(() => threads.id, {onDelete: "cascade"}),
+  commentId: integer("comment_id").references(() => comments.id, {onDelete: "cascade"}),
   userId: integer("user_id").references(() => users.id).notNull(),
   type: voteEnum("vote_type").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  uniqueVote: { unique: [table.userId, table.threadId, table.commentId] },
-}));
+});

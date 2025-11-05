@@ -68,8 +68,8 @@ export const deleteVote = async (req, res) => {
 export const countVote = async (req,res) => {
   try{
     const { id } = req.params;
-    const upvote = await db.$count(votes,and(eq(votes.threadId,id),eq(votes.type, voteEnum.upvote)));
-    const downvote = await db.$count(votes, and(eq(votes.threadId,id),eq(votes.type,voteEnum.downvote)));
+    const upvote = await db.$count(votes,and(eq(votes.threadId,id),eq(votes.type, "upvote")));
+    const downvote = await db.$count(votes, and(eq(votes.threadId,id),eq(votes.type,"downvote")));
     res.json({upvote: upvote, downvote: downvote});
 
 

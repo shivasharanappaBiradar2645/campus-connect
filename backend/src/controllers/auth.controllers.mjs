@@ -107,12 +107,22 @@ export const getUserProfileExtended = async (req, res) => {
     const { password, ...userWithoutPassword } = userProfile[0];
     const allthreads = await db.select().from(threads).where(eq(threads.authorId, userId));
     const allcomments = await db.select().from(comments).where(eq(comments.authorId,userId));
-    const allvotes = await db.select().from(votes).where(eq(votes.userId,userId));
+    const votethreads = await db
+        .select()
+        .from(threads)
+        .innerJoin(votes, eq(threads.id, votes.threadId))
+        .where(eq(votes.userId, userId));
+    const votecomments = await db
+        .select()
+        .from(comments)
+        .innerJoin(votes, eq(comments.id, votes.commentId))
+        .where(eq(votes.userId, userId));
 
     res.status(200).json({
       profile: userWithoutPassword,
       thread: allthreads,
-      vote: allvotes,
+      votethreads: votethreads,
+      votecomments: votecomments,
       comment: allcomments,
     });
   } catch (e) {
