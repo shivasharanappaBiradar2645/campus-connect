@@ -1,115 +1,164 @@
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
-import {Textarea} from "@/components/ui/textarea"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import React, {useEffect, useRef, useState} from 'react'
 
-// import type { Editor } from '@tiptap/react'
+import EditorJS from '@editorjs/editorjs'
+import Header from '@editorjs/header'
+import List from '@editorjs/list'
+import Checklist from '@editorjs/checklist'
+import Quote from '@editorjs/quote'
+import Delimiter from '@editorjs/delimiter'
+import editorjsHTML from 'editorjs-html'
+import {useNavigate} from "react-router-dom";
+import {Toaster} from "@/components/ui/sonner.jsx"
+import {toast} from "sonner"
 
-// import { TextStyleKit } from '@tiptap/extension-text-style'
-import React from "react"
-import {EditorContent, useEditor, useEditorState} from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-// import {Button} from "@/components/ui/button" // shadcn button
 
-const extensions = [StarterKit]
+function TextEditor({editorInstance, editorId}) {
 
-function MenuBar({editor}) {
-    const editorState = useEditorState({
-        editor,
-        selector: ctx => ({
-            isBold: ctx.editor.isActive("bold"),
-            isItalic: ctx.editor.isActive("italic"),
-            isStrike: ctx.editor.isActive("strike"),
-            isBulletList: ctx.editor.isActive("bulletList"),
-            isOrderedList: ctx.editor.isActive("orderedList"),
-            canUndo: ctx.editor.can().chain().undo().run(),
-            canRedo: ctx.editor.can().chain().redo().run(),
-        }),
-    })
+    // console.log(editorId.current)
 
-    if (!editor) return null
+    useEffect(() => {
+        if (editorInstance.current) return
 
-    const buttons = [
-        {label: "B", action: () => editor.chain().focus().toggleBold().run(), active: editorState.isBold},
-        {label: "I", action: () => editor.chain().focus().toggleItalic().run(), active: editorState.isItalic},
-        {label: "S", action: () => editor.chain().focus().toggleStrike().run(), active: editorState.isStrike},
-        {label: "•", action: () => editor.chain().focus().toggleBulletList().run(), active: editorState.isBulletList},
-        {
-            label: "1.",
-            action: () => editor.chain().focus().toggleOrderedList().run(),
-            active: editorState.isOrderedList
-        },
-        {label: "↩", action: () => editor.chain().focus().undo().run(), disabled: !editorState.canUndo},
-        {label: "↪", action: () => editor.chain().focus().redo().run(), disabled: !editorState.canRedo},
-    ]
+        editorInstance.current = new EditorJS({
+            holder: editorId.current,
+            placeholder: 'Start writing your content here...',
+            minHeight: 0,
+            tools: {
+                header: {
+                    class: Header,
+                    config: {
+                        placeholder: 'Enter a header',
+                        levels: [1, 2, 3, 4, 5],
+                        defaultLevel: 2,
+                    },
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                },
+                checklist: {
+                    class: Checklist,
+                    inlineToolbar: true,
+                },
+                quote: {
+                    class: Quote,
+                    inlineToolbar: true,
+                    config: {
+                        quotePlaceholder: 'Enter a quote',
+                        captionPlaceholder: 'Quote author',
+                    },
+                },
+                delimiter: Delimiter,
+            },
+        })
 
-    return (
-        <div className="flex flex-wrap gap-2 bg-muted/50 rounded-lg p-2 mb-3">
-            {buttons.map((btn, i) => (
-                <Button
-                    key={i}
-                    variant={btn.active ? "default" : "ghost"}
-                    size="sm"
-                    disabled={btn.disabled}
-                    onClick={btn.action}
-                    className="w-8 h-8 p-0 font-bold"
-                >
-                    {btn.label}
-                </Button>
-            ))}
-        </div>
-    )
-}
-
-function TextEditor() {
-    const editor = useEditor({
-        extensions,
-        content: "<p>Start writing your post...</p>",
-    })
+        return () => {
+            if (editorInstance.current && editorInstance.current.destroy) {
+                editorInstance.current.destroy()
+                editorInstance.current = null
+            }
+        }
+    }, [])
 
     return (
-        <>
-            <div className="flex flex-col h-full border rounded-lg">
-                <MenuBar editor={editor}/>
-                <div className="flex-1 overflow-hidden  rounded-lg">
-                    <EditorContent
-                        editor={editor}
-                        className=" h-full p-3 outline-none focus:outline-none focus:border-none
-                         focus-visible:outline-none focus-visible:border-none"
-                    />
-                </div>
-            </div>
-        </>
+        <div
+            id={editorId.current}
+            className="border rounded-lg bg-card shadow-sm p-4 focus-within:ring-2 focus-within:ring-ring transition-all h-[55vh] overflow-y-auto"
+        />
     )
 }
-
 
 export default function Create({setCreatePost}) {
+    const BASE = 'http://localhost:3000'
+    const [token, setToken] = useState("");
+    const navigate = useNavigate();
+
+    const editorInstance = useRef(null)
+    const editorId = useRef(`editor-${Math.random().toString(36).substr(2, 9)}`)
+
+    const [postHeader, setPostHeader] = useState("")
+    const [postBody, setPostBody] = useState("")
+    const [postType, setPostType] = useState("")
+
+    const edjsParser = editorjsHTML()
+
+    async function handleSave() {
+        if (editorInstance.current) {
+            const data = await editorInstance.current.save()
+            console.log(data)
+            const htmlBlock = edjsParser.parse(data)
+            setPostBody(htmlBlock)
+        }
+    }
+
+    async function handleSubmit() {
+        await handleSave()
+
+        if (postHeader.length > 0 && postBody.length > 0) {
+            try {
+                const body = {title: postHeader, content: postBody}
+                console.log(body)
+
+                const res = await fetch(`${BASE}/threads`, {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body),
+                })
+
+                const data = await res.json()
+
+                if (res.status === 201) {
+                    console.log("Success")
+                    toast.success("Post successfully created!");
+                    setCreatePost(false)
+                } else {
+                    toast.error("Something Went Wrong!");
+                    console.log("failed")
+                }
+            } catch (e) {
+                console.log(e)
+                toast.error("Something Went Wrong!");
+            }
+        } else {
+            toast.error("Must Enter Content");
+            console.log("enter header and body")
+        }
+    }
+
+    useEffect(() => {
+        const storedToken = localStorage.getItem("authToken");
+        if (!storedToken) {
+            navigate("/auth");
+        } else {
+            setToken(storedToken);
+        }
+    }, [navigate]);
+
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col min-h-screen">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
+            <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
                 <Button variant="ghost" onClick={() => setCreatePost(false)}>
                     ←
                 </Button>
                 <h1 className="text-lg font-semibold w-full text-center">Create New Post</h1>
-                <div className="w-16" /> {/* spacer */}
+                <div className="w-16"/>
             </div>
 
             {/* Form */}
-            <div className="flex flex-col flex-1 p-4 space-y-6">
+            <div className="flex flex-col flex-1 p-4 space-y-6 max-w-4xl w-full mx-auto">
                 {/* Visibility Dropdown */}
                 <div className="max-w-sm">
                     <label className="block mb-1 text-sm font-medium">Visibility</label>
-                    <Select defaultValue="public">
+                    <Select defaultValue="public" onValueChange={(value) => setPostType(value)}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select visibility" />
+                            <SelectValue placeholder="Select visibility"/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="public">Public</SelectItem>
@@ -118,23 +167,29 @@ export default function Create({setCreatePost}) {
                     </Select>
                 </div>
 
+
+                {/* Title */}
                 <div className="max-w-2xl">
                     <label className="block mb-1 text-sm font-medium">Title</label>
-                    <Input placeholder="Enter post title" />
+                    <Input placeholder="Enter post title"
+                           value={postHeader}
+                           onChange={(e) => setPostHeader(e.target.value)}
+                    />
                 </div>
 
-                <div className="flex-1 min-h-0 max-w-3xl">
-                    <TextEditor className="h-full" />
+                {/* Editor */}
+                <div className="max-w-3xl">
+                    <TextEditor editorInstance={editorInstance} editorId={editorId}/>
                 </div>
 
                 {/* Submit Button */}
                 <div className="max-w-3xl">
-                    <Button className="w-full">Create Post</Button>
+                    <Button className="w-full" onClick={() => {
+                        handleSubmit()
+                    }}>Create Post</Button>
                 </div>
             </div>
+            <Toaster richColors position="top-right"/>
         </div>
     )
-
-
-
 }

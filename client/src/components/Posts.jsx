@@ -133,13 +133,13 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
     }, [post, reFetch])
 
     // console.log("postComments:", postComments);
-    useEffect(() => {
-        console.log("token: " + token);
-    }, [token]);
-
-    useEffect(() => {
-        console.log("vote: " + voteCount)
-    }, [voteCount]);
+    // useEffect(() => {
+    //     console.log("token: " + token);
+    // }, [token]);
+    //
+    // useEffect(() => {
+    //     console.log("vote: " + voteCount)
+    // }, [voteCount]);
 
     return (
         <div

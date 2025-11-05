@@ -3,6 +3,8 @@ import HomePage from "@/pages/Home.jsx";
 import ProfilePage from "@/pages/Profile.jsx";
 import Auth from "@/pages/Auth.jsx";
 import './index.css'
+import { Toaster } from "@/components/ui/sonner"
+
 
 
 export default function App() {
