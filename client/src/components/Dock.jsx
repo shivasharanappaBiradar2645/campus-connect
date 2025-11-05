@@ -8,7 +8,7 @@ import {Label} from "@/components/ui/label"
 import {Select, SelectTrigger, SelectContent, SelectItem, SelectValue} from "@/components/ui/select"
 import {useState} from "react";
 
-export default function MobileNav() {
+export default function MobileNav({setCreatePost}) {
     const [title, setTitle] = useState("")
     const [content, setContent] = useState("")
     const [visibility, setVisibility] = useState("public")
@@ -33,6 +33,9 @@ export default function MobileNav() {
                     <Button
                         variant="ghost"
                         className="flex flex-col items-center gap-1 p-2 h-auto w-auto"
+                        onClick={() => {
+                            setCreatePost(true)
+                        }}
                     >
                         <PlusCircle className="w-12 h-12"/>
                         <span className="text-base font-semibold">Create</span>

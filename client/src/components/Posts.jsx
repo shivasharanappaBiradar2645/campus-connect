@@ -49,7 +49,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
             const data = await res.json()
 
             if (res.ok) {
-                console.log(data);
+                // console.log(data);
                 setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()
@@ -75,7 +75,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
             const data = await res.json()
 
             if (res.ok) {
-                console.log(data);
+                // console.log(data);
                 setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()

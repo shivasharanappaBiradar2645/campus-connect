@@ -9,12 +9,15 @@ import {
 import {Button} from "@/components/ui/button"
 import MobileNav from "@/components/Dock.jsx"
 import Posts from "@/components/Posts.jsx"
+import Create from "@/pages/Create.jsx";
 
 export default function HomePage() {
     const BASE = 'http://localhost:3000'
     const [postData, setPostData] = useState([])
     const [comments, setComments] = useState([])
     const [fetchPosts, setFetchPosts] = useState(true)
+    const [createPost, setCreatePost] = useState(false)
+
     function TopBarHome() {
         return (
             <div className="h-fit flex justify-between items-center px-4 py-2 border-b border-gray-300">
@@ -88,7 +91,6 @@ export default function HomePage() {
         fetchCommentsForAll()
     }, [postData])
 
-
     //TODO remove after testing
 
     // useEffect(() => {
@@ -98,17 +100,26 @@ export default function HomePage() {
     //     console.log(postData)
     // }, [postData])
 
-    return (
-        <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
-            <TopBarHome />
 
-            <div className="overflow-y-scroll flex flex-col">
-                {postData.map((post, index) => (
-                    <Posts post={post} key={index} comments={comments} fetchPosts={fetchPosts} setFetchPosts={setFetchPosts} />
-                ))}
+    if (createPost) {
+        return <Create setCreatePost={setCreatePost}/>
+    } else {
+
+        return (
+
+            <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
+                <TopBarHome/>
+
+                <div className="overflow-y-scroll flex flex-col">
+                    {postData.map((post, index) => (
+                        <Posts post={post} key={index} comments={comments} fetchPosts={fetchPosts}
+                               setFetchPosts={setFetchPosts}/>
+                    ))}
+                </div>
+
+                <MobileNav setCreatePost={setCreatePost}/>
             </div>
+        )
+    }
 
-            <MobileNav />
-        </div>
-    )
 }
