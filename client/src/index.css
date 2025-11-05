@@ -118,3 +118,30 @@
 /*    @apply bg-background text-foreground;*/
 /*  }*/
 /*}*/
+
+.editor-content p {
+  margin-bottom: 1em;
+}
+
+.editor-content b {
+  font-weight: bold;
+}
+
+.editor-content i {
+  font-style: italic;
+}
+
+.editor-content a {
+  text-decoration: underline;
+  color: #000000;
+}
+
+.editor-content ul,
+.editor-content ol {
+  margin-left: 1.5em;
+  padding-left: 0;
+}
+
+.editor-content li {
+  margin-bottom: 0.5em;
+}

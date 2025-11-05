@@ -10,6 +10,7 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
+import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 
 export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
     const BASE = 'http://localhost:3000'
@@ -132,6 +133,8 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
         fetchVoteCount(post.id)
     }, [post, reFetch])
 
+    //TESTING PURPOSE ONLY
+
     // console.log("postComments:", postComments);
     // useEffect(() => {
     //     console.log("token: " + token);
@@ -140,6 +143,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
     // useEffect(() => {
     //     console.log("vote: " + voteCount)
     // }, [voteCount]);
+    //
 
     return (
         <div
@@ -163,9 +167,15 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <p className="text-gray-700 leading-relaxed">
-                {post.content}
-            </p>
+            <div className="editor-content" dangerouslySetInnerHTML={{__html: post?.content}}>
+
+            </div>
+
+            {/*<div>*/}
+            {/*    { ReactHtmlParser(post.content) }*/}
+            {/*    /!*{post?.content.trim()}*!/*/}
+            {/*</div>*/}
+
 
             {/*actions*/}
             <div className="flex justify-between items-center mt-4 text-gray-600">

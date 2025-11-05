@@ -58,6 +58,7 @@ export default function HomePage() {
                 const data = await res.json()
                 if (res.ok) {
                     setPostData(data)
+                    console.log(data)
                 } else {
                     console.log(data)
                 }
