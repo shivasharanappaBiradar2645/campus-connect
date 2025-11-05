@@ -10,9 +10,9 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser, {processNodes, convertNodeToElement, htmlparser2} from 'react-html-parser';
 
-export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
+export default function Posts({post, comments, fetchPosts, setFetchPosts, actions}) {
     const BASE = 'http://localhost:3000'
     const [postComments, setPostComments] = useState([]);
     const [voteCount, setVoteCount] = useState(0);
@@ -147,8 +147,8 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
 
     return (
         <div
-            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
-            <div className="flex flex-row justify-between items-center">
+            className="relative border border-gray-200 rounded-2xl max-h-[30em] overflow-hidden shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
+            <div className="flex flex-row justify-between items-center mb-2">
                 <h1 className="text-xl font-semibold mb-2">{post.title}</h1>
 
                 <DropdownMenu>
@@ -166,44 +166,45 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
                         <DropdownMenuItem>Share</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </div>
-            <div className="editor-content" dangerouslySetInnerHTML={{__html: post?.content}}>
 
             </div>
-
-            {/*<div>*/}
-            {/*    { ReactHtmlParser(post.content) }*/}
-            {/*    /!*{post?.content.trim()}*!/*/}
-            {/*</div>*/}
-
+            <div className="editor-content" dangerouslySetInnerHTML={{__html: post?.content}}/>
 
             {/*actions*/}
-            <div className="flex justify-between items-center mt-4 text-gray-600">
-                {/*upvote downvote*/}
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => {
-                            handleUpVote(post.id)
-                        }}
-                        className="hover:text-blue-600 transition-colors">
-                        <ArrowBigUp className="w-6 h-6"/>
-                    </button>
-                    <h1>{voteCount}</h1>
-                    <button
-                        onClick={() => {
-                            handleDownVote(post.id)
-                        }}
-                        className="hover:text-red-500 transition-colors">
-                        <ArrowBigDown className="w-6 h-6"/>
-                    </button>
-                </div>
+            {
+                actions
+                    ? <div className="flex justify-between items-center mt-4 text-gray-600">
+                        {/*upvote downvote*/}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => {
+                                    handleUpVote(post.id)
+                                }}
+                                className="hover:text-blue-600 transition-colors">
+                                <ArrowBigUp className="w-6 h-6"/>
+                            </button>
+                            <h1>{voteCount}</h1>
+                            <button
+                                onClick={() => {
+                                    handleDownVote(post.id)
+                                }}
+                                className="hover:text-red-500 transition-colors">
+                                <ArrowBigDown className="w-6 h-6"/>
+                            </button>
+                        </div>
 
-                {/*comments*/}
-                <div className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
-                    <MessageCircle className="w-5 h-5"/>
-                    <span className="text-sm font-medium">{postComments.length} Comments</span>
-                </div>
-            </div>
+                        {/*comments*/}
+                        <div className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
+                            <MessageCircle className="w-5 h-5"/>
+                            <span className="text-sm font-medium">{postComments.length} Comments</span>
+                        </div>
+                    </div>
+                    : null
+            }
+
+            <div
+                className="absolute bottom-0 left-0 w-full h-[50%] bg-linear-[180deg,transparent_15%,white_85%] pointer-events-none"/>
+
         </div>
     )
 }
