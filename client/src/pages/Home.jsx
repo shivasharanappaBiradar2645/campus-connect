@@ -113,10 +113,19 @@ export default function HomePage() {
 
                 <div className="overflow-y-scroll flex flex-col">
                     {postData.map((post, index) => (
-                        <Posts post={post} key={index} comments={comments} fetchPosts={fetchPosts}
-                               setFetchPosts={setFetchPosts}/>
+                        <Posts
+                            post={post}
+                            key={index}
+                            comments={comments}
+                            fetchPosts={fetchPosts}
+                            setFetchPosts={setFetchPosts}
+                            actions={false}
+                        />
                     ))}
                 </div>
+
+                {/*spacer*/}
+                <div className="h-[3rem]"/>
 
                 <MobileNav setCreatePost={setCreatePost}/>
             </div>

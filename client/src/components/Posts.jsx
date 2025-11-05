@@ -147,63 +147,65 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
 
     return (
         <div
-            className="relative border border-gray-200 rounded-2xl max-h-[30em] overflow-hidden shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
-            <div className="flex flex-row justify-between items-center mb-2">
-                <h1 className="text-xl font-semibold mb-2">{post.title}</h1>
+            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Ellipsis className="h-5 w-5"/>
-                        </Button>
-                    </DropdownMenuTrigger>
+            <div className="relative max-h-[25em] overflow-hidden ">
 
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem className={"bg-red-400"} onClick={() => handleDeletePost(post.id)}>
-                            <Trash color={"black"}/> Delete
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Share</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex flex-row justify-between items-center mb-2">
+                    <h1 className="text-xl font-semibold mb-2">{post.title}</h1>
 
+                    {actions ? <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                                <Ellipsis className="h-5 w-5"/>
+                            </Button>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem className={"bg-red-400"} onClick={() => handleDeletePost(post.id)}>
+                                <Trash color={"black"}/> Delete
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem>Share</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu> : null}
+
+
+                </div>
+                <div className="editor-content" dangerouslySetInnerHTML={{__html: post?.content}}/>
+
+                <div
+                    className="absolute bottom-0 left-0 w-full h-[50%] bg-linear-[180deg,transparent_15%,white_85%] pointer-events-none"/>
             </div>
-            <div className="editor-content" dangerouslySetInnerHTML={{__html: post?.content}}/>
-
             {/*actions*/}
-            {
-                actions
-                    ? <div className="flex justify-between items-center mt-4 text-gray-600">
-                        {/*upvote downvote*/}
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => {
-                                    handleUpVote(post.id)
-                                }}
-                                className="hover:text-blue-600 transition-colors">
-                                <ArrowBigUp className="w-6 h-6"/>
-                            </button>
-                            <h1>{voteCount}</h1>
-                            <button
-                                onClick={() => {
-                                    handleDownVote(post.id)
-                                }}
-                                className="hover:text-red-500 transition-colors">
-                                <ArrowBigDown className="w-6 h-6"/>
-                            </button>
-                        </div>
 
-                        {/*comments*/}
-                        <div className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
-                            <MessageCircle className="w-5 h-5"/>
-                            <span className="text-sm font-medium">{postComments.length} Comments</span>
-                        </div>
-                    </div>
-                    : null
-            }
+            <div className="flex justify-between items-center text-gray-600">
+                {/*upvote downvote*/}
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => {
+                            handleUpVote(post.id)
+                        }}
+                        className="hover:text-blue-600 transition-colors">
+                        <ArrowBigUp className="w-6 h-6"/>
+                    </button>
+                    <h1>{voteCount}</h1>
+                    <button
+                        onClick={() => {
+                            handleDownVote(post.id)
+                        }}
+                        className="hover:text-red-500 transition-colors">
+                        <ArrowBigDown className="w-6 h-6"/>
+                    </button>
+                </div>
 
-            <div
-                className="absolute bottom-0 left-0 w-full h-[50%] bg-linear-[180deg,transparent_15%,white_85%] pointer-events-none"/>
+                {/*comments*/}
+                <div className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
+                    <MessageCircle className="w-5 h-5"/>
+                    <span className="text-sm font-medium">{postComments.length} Comments</span>
+                </div>
+            </div>
+
 
         </div>
     )

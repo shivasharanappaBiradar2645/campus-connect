@@ -142,7 +142,7 @@ export default function ProfilePage() {
                             {userData?.thread.length === 0
                                 ? <p className="text-gray-500">Wow so empty</p>
                                 : userData?.thread?.map((item, index) => (
-                                    <Posts post={item} key={index}/>
+                                    <Posts post={item} key={index} actions={true}/>
                                 ))
                             }
 
@@ -153,7 +153,8 @@ export default function ProfilePage() {
                             {userData?.comment.length === 0
                                 ? <p className="text-gray-500">No comments yet.</p>
                                 : userData?.comment?.map((item, index) => (
-                                    <Comments comment={item} key={index} username={userData?.profile?.username} userImg={userData?.profile?.imageUrl}/>
+                                    <Comments comment={item} key={index} username={userData?.profile?.username}
+                                              userImg={userData?.profile?.imageUrl}/>
                                 ))
                             }
                         </TabsContent>
@@ -171,6 +172,9 @@ export default function ProfilePage() {
                     </Tabs>
                 </Card>
             </div>
+
+            {/*spacer*/}
+            <div className="h-[5rem]"/>
 
             {/* Mobile nav */}
             <MobileNav/>
