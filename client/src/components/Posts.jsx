@@ -2,7 +2,7 @@ import {ArrowBigUp, ArrowBigDown, MessageCircle} from "lucide-react"
 import {Ellipsis} from 'lucide-react';
 import {Trash} from 'lucide-react';
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -19,6 +19,9 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
     const [token, setToken] = useState("");
     const [reFetch, setReFetch] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
+    const [pageId, setPageId] = useState(1);
+
 
     async function fetchVoteCount(Id) {
         try {
@@ -133,6 +136,16 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
         fetchVoteCount(post.id)
     }, [post, reFetch])
 
+
+    useEffect(() => {
+        if (location.pathname === "/") {
+            setPageId(1);
+        } else {
+            setPageId(2);
+        }
+    }, [location.pathname]);
+
+
     //TESTING PURPOSE ONLY
 
     // console.log("postComments:", postComments);
@@ -147,7 +160,10 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
 
     return (
         <div
-            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow">
+            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow"
+            onClick={() => {
+                navigate(`/post/${post.id}/${pageId}`);
+            }}>
 
             <div className="relative max-h-[25em] overflow-hidden ">
 
@@ -186,7 +202,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                         onClick={() => {
                             handleUpVote(post.id)
                         }}
-                        className="hover:text-blue-600 transition-colors">
+                        className="hover:text-orange-600 transition-colors">
                         <ArrowBigUp className="w-6 h-6"/>
                     </button>
                     <h1>{voteCount}</h1>
@@ -194,7 +210,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                         onClick={() => {
                             handleDownVote(post.id)
                         }}
-                        className="hover:text-red-500 transition-colors">
+                        className="hover:text-blue-500 transition-colors">
                         <ArrowBigDown className="w-6 h-6"/>
                     </button>
                 </div>
