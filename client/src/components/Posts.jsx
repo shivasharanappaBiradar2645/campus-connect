@@ -27,7 +27,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts}) {
             })
             const data = await res.json()
             if (res.ok) {
-                setVoteCount(data.downvote - data.upvote)
+                setVoteCount(data.upvote - data.downvote);
             } else {
                 console.error(data)
             }

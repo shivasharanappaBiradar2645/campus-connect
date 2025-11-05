@@ -161,10 +161,10 @@ export default function ProfilePage() {
                         <TabsContent value="votes" className="p-4">
                             {/* Render votes */}
 
-                            {userData?.vote.length === 0
-                                ? <p className="text-gray-500">No votes yet.</p>
-                                : <h1>you have votes</h1>
-                            }
+                            {/*{userData?..length === 0*/}
+                            {/*    ? <p className="text-gray-500">No votes yet.</p>*/}
+                            {/*    : <h1>you have votes</h1>*/}
+                            {/*}*/}
 
 
                         </TabsContent>

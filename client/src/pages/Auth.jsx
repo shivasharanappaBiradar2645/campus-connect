@@ -17,6 +17,7 @@ export default function Auth() {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const [token, setToken] = useState("");
+
     const API_BASE_URL = 'http://localhost:3000';
 
     const handleInputChange = (e) => {

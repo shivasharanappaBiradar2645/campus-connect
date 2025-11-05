@@ -5,7 +5,7 @@ import {Button} from "@/components/ui/button.jsx";
 
 export default function Comments({comment, username, userImg}) {
     return (
-        <Card className="shadow-sm rounded-xl p-0">
+        <Card className="shadow-sm rounded-xl p-0 my-2 ">
             <CardContent className="flex items-start gap-4 p-4">
                 {/* Avatar */}
                 <Avatar className="w-12 h-12">
