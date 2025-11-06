@@ -18,7 +18,7 @@ export default function Auth() {
     const [loading, setLoading] = useState(false);
     const [token, setToken] = useState("");
 
-    const API_BASE_URL = 'http://localhost:3000';
+    const API_BASE_URL = 'https://campus-connect-98bf.onrender.com';
 
     const handleInputChange = (e) => {
         setFormData({
