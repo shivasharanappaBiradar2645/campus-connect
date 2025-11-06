@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import {Textarea} from "@/components/ui/textarea.jsx";
 
 export default function Comments({comment, authorId}) {
-    const BASE = 'http://localhost:3000'
+    const BASE = 'https://campus-connect-98bf.onrender.com'
     const [author, setAuthor] = useState({});
 
 

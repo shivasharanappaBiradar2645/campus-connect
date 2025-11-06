@@ -13,7 +13,7 @@ import {Button} from "@/components/ui/button";
 import ReactHtmlParser, {processNodes, convertNodeToElement, htmlparser2} from 'react-html-parser';
 
 export default function Posts({post, comments, fetchPosts, setFetchPosts, actions}) {
-    const BASE = 'http://localhost:3000'
+    const BASE = 'https://campus-connect-98bf.onrender.com'
     const [postComments, setPostComments] = useState([]);
     const [voteCount, setVoteCount] = useState(0);
     const [token, setToken] = useState("");
