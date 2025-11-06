@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
+import { jwtDecode } from 'jwt-decode'
 
-export default function Auth() {
+export default function Auth({setAuthorId}) {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
@@ -91,6 +92,11 @@ export default function Auth() {
 
                 localStorage.clear();
                 localStorage.setItem('authToken', data.token);
+
+                const user = jwtDecode(token);
+                console.log(user);
+                setAuthorId(user?.id);
+
                 setSuccess('Login successful!');
 
                 setFormData({
