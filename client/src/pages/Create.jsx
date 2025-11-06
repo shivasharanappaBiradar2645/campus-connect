@@ -13,6 +13,7 @@ import editorjsHTML from 'editorjs-html'
 import {useNavigate} from "react-router-dom";
 import {Toaster} from "@/components/ui/sonner.jsx"
 import {toast} from "sonner"
+import {ArrowLeft} from "lucide-react";
 
 
 function TextEditor({editorInstance, editorId}) {
@@ -144,8 +145,8 @@ export default function Create({setCreatePost}) {
         <div className="flex flex-col min-h-screen">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
-                <Button variant="ghost" onClick={() => setCreatePost(false)}>
-                    ←
+                <Button variant="outline" size="icon-lg" onClick={() => navigate(-1)}>
+                    <ArrowLeft/>
                 </Button>
                 <h1 className="text-lg font-semibold w-full text-center">Create New Post</h1>
                 <div className="w-16"/>

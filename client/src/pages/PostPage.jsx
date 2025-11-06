@@ -7,6 +7,8 @@ import {ArrowBigDown, ArrowBigUp, Ellipsis, MessageCircle, Trash} from "lucide-r
 import Comments from "@/components/Comments.jsx";
 import {Textarea} from "@/components/ui/textarea.jsx";
 import {toast} from "sonner";
+import {ArrowLeft} from 'lucide-react';
+import {SendHorizontal} from 'lucide-react';
 
 
 export default function PostPage() {
@@ -102,8 +104,8 @@ export default function PostPage() {
                     {/* Header */}
                     <div
                         className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-10 shadow-sm">
-                        <Button variant="ghost" onClick={() => navigate(-1)}>
-                            ←
+                        <Button variant="outline" size="icon-lg" onClick={() => navigate(-1)}>
+                            <ArrowLeft/>
                         </Button>
                         <h1 className="text-lg font-semibold w-full text-center text-gray-800">
                             Post Details
@@ -191,10 +193,11 @@ export default function PostPage() {
                             rows={1}
                         />
                         <Button
-                            className="rounded-lg px-4 py-2 bg-gray-800 text-white hover:bg-gray-900 transition-colors text-sm"
+                            varient="outline"
+                            size="icon-lg"
                             onClick={handleSubmitComment}
                         >
-                            Post
+                            <SendHorizontal/>
                         </Button>
                     </div>
                 </div>
