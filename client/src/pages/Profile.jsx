@@ -105,7 +105,7 @@ export default function ProfilePage() {
                                     <AvatarFallback>{user?.username?.split("")[0]}</AvatarFallback>
                                 </Avatar>
                                 <div>
-                                    <h2 className="text-xl font-semibold">{user?.name}</h2>
+                                    <h2 className="text-xl font-[header]">{user?.name}</h2>
                                     <p className="text-sm text-gray-500">{"@" + user?.username + " • " + user?.role} </p>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@ export default function ProfilePage() {
                         </div>
 
                         {/* bio */}
-                        <div className="mt-5">
+                        <div className="mt-6 font-[Header] text-xl">
                             {/*<p>{user.email}</p>*/}
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                         </div>

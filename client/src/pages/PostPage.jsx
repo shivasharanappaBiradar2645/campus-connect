@@ -117,7 +117,7 @@ export default function PostPage() {
                     <div className="flex-1 w-full max-w-4xl mx-auto p-6 space-y-8">
                         {/* Post Section */}
                         <div className="bg-white border rounded-2xl shadow-sm p-6">
-                            <h1 className="text-2xl font-semibold mb-4 text-gray-900">
+                            <h1 className="text-2xl font-semibold mb-4 text-gray-900 font-[Header]">
                                 {post.title || ""}
                             </h1>
 

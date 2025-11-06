@@ -161,14 +161,16 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
     return (
         <div
             className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow"
-            onClick={() => {
-                navigate(`/post/${post.id}/${pageId}`);
-            }}>
+        >
 
-            <div className="relative max-h-[25em] overflow-hidden ">
+            <div
+                onClick={() => {
+                    navigate(`/post/${post.id}/${pageId}`);
+                }}
+                className="relative max-h-[25em] overflow-hidden ">
 
                 <div className="flex flex-row justify-between items-center mb-2">
-                    <h1 className="text-xl font-semibold mb-2">{post.title}</h1>
+                    <h1 className="text-2xl font-semibold mb-2 font-[Header]">{post.title}</h1>
 
                     {actions ? <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -216,7 +218,10 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                 </div>
 
                 {/*comments*/}
-                <div className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
+                <div onClick={() => {
+                    navigate(`/post/${post.id}/${pageId}`);
+                }}
+                     className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
                     <MessageCircle className="w-5 h-5"/>
                     <span className="text-sm font-medium">{postComments.length} Comments</span>
                 </div>
