@@ -13,6 +13,7 @@ export default function MobileNav({setCreatePost}) {
     const [content, setContent] = useState("")
     const [visibility, setVisibility] = useState("public")
     const navigate = useNavigate();
+    const [currenticon, setCurrenticon] = useState("home")
 
     return (
         <div
@@ -21,25 +22,33 @@ export default function MobileNav({setCreatePost}) {
             <Button
                 variant="ghost"
                 className="p-4 hover:bg-gray-100"
-                onClick={() => navigate("/")}
+                onClick={() => {
+                    setCurrenticon("home");
+                    setTimeout(() => navigate("/"), 0);
+                }}
+
             >
-                <Home className="!size-6"/>
+                <Home  className="!size-6" fill={currenticon === "home" ? "black" : "none"} />
+
             </Button>
 
             <Button
                 variant="ghost"
                 className="p-4 hover:bg-gray-100"
-                onClick={() => setCreatePost(true)}
+                onClick={() => {setCreatePost(true);
+                setCurrenticon("create")}}
             >
-                <PlusCircle className="!size-7"/>
+                <PlusCircle className="!size-7" fill={currenticon === "create" ? "black" : "none"} />
             </Button>
 
             <Button
                 variant="ghost"
                 className="p-4 hover:bg-gray-100"
-                onClick={() => navigate("/profile")}
+                onClick={() => {    setCurrenticon("profile");
+                    setTimeout(() => navigate("/profile"), 0);
+              }}
             >
-                <User className="!size-6"/>
+                <User  className="!size-6" fill={currenticon === "profile" ? "black" : "none"} />
             </Button>
         </div>
 
