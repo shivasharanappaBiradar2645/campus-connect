@@ -48,7 +48,7 @@ export default function HomePage() {
                     {/*    <Bell/>*/}
                     {/*</Button>*/}
 
-                    <span className={"font-[Header] text-2xl"}>Campus Connect</span>
+                    <span className={" text-xl"}>Campus Connect</span>
                 </div>
             </div>
         )

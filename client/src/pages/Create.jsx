@@ -16,61 +16,58 @@ import {toast} from "sonner"
 import {ArrowLeft} from "lucide-react";
 
 
-function TextEditor({editorInstance, editorId}) {
+    function TextEditor({editorInstance, editorId}) {
 
-    // console.log(editorId.current)
+        // console.log(editorId.current)
 
-    useEffect(() => {
-        if (editorInstance.current) return
+        useEffect(() => {
+            if (editorInstance.current) return
 
-        editorInstance.current = new EditorJS({
-            holder: editorId.current,
-            placeholder: 'Start writing your content here...',
-            minHeight: 0,
-            tools: {
-                header: {
-                    class: Header,
-                    config: {
-                        placeholder: 'Enter a header',
-                        levels: [1, 2, 3, 4, 5],
-                        defaultLevel: 2,
+            editorInstance.current = new EditorJS({
+                holder: editorId.current,
+                placeholder: 'Start writing your content here...',
+                minHeight: 0,
+                tools: {
+                    header: {
+                        class: Header,
+                        config: {
+                            placeholder: 'Enter a header',
+                            levels: [1, 2, 3, 4, 5],
+                            defaultLevel: 2,
+                        },
                     },
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true,
-                },
-                checklist: {
-                    class: Checklist,
-                    inlineToolbar: true,
-                },
-                quote: {
-                    class: Quote,
-                    inlineToolbar: true,
-                    config: {
-                        quotePlaceholder: 'Enter a quote',
-                        captionPlaceholder: 'Quote author',
+                    list: {
+                        class: List,
+                        inlineToolbar: true,
                     },
+                    quote: {
+                        class: Quote,
+                        inlineToolbar: true,
+                        config: {
+                            quotePlaceholder: 'Enter a quote',
+                            captionPlaceholder: 'Quote author',
+                        },
+                    },
+                    delimiter: Delimiter,
                 },
-                delimiter: Delimiter,
-            },
-        })
+            });
 
-        return () => {
-            if (editorInstance.current && editorInstance.current.destroy) {
-                editorInstance.current.destroy()
-                editorInstance.current = null
+
+            return () => {
+                if (editorInstance.current && editorInstance.current.destroy) {
+                    editorInstance.current.destroy()
+                    editorInstance.current = null
+                }
             }
-        }
-    }, [])
+        }, [])
 
-    return (
-        <div
-            id={editorId.current}
-            className="border rounded-lg bg-card shadow-sm p-4 focus-within:ring-2 focus-within:ring-ring transition-all h-[55vh] overflow-y-auto"
-        />
-    )
-}
+        return (
+            <div
+                id={editorId.current}
+                className="border rounded-lg bg-card shadow-sm p-4 focus-within:ring-2 focus-within:ring-ring transition-all h-[55vh] overflow-y-auto"
+            />
+        )
+    }
 
 export default function Create({setCreatePost}) {
     const BASE = 'http://localhost:3000'
