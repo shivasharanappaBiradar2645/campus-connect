@@ -15,7 +15,7 @@ export default function MobileNav({ setCreatePost }) {
     const activeTab = getActiveTab();
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-300 bg-white flex justify-around items-center py-3 z-50">
+        <div className="fixed bottom-0 left-0 right-0 border-t border-gray-300 bg-(--accent) flex justify-around items-center py-3 z-50">
             <Button
                 variant="ghost"
                 className="p-4 hover:bg-gray-100"

@@ -209,7 +209,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
 
     return (
         <div
-            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-white hover:shadow-md transition-shadow"
+            className="border border-gray-200 rounded-2xl shadow-sm p-4 m-4 bg-[#fffaff] hover:shadow-md transition-shadow"
         >
 
             <div

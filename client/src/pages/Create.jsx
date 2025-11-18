@@ -142,9 +142,9 @@ export default function Create({setCreatePost}) {
     }, [navigate]);
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen ">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b bg-background sticky top-0 z-10">
+            <div className="flex items-center justify-between p-4 border-b bg-(--accent) sticky top-0 z-10">
                 <Button variant="outline" size="icon-lg" onClick={() => navigate(-1)}>
                     <ArrowLeft/>
                 </Button>

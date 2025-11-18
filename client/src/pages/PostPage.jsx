@@ -213,7 +213,7 @@ export default function PostPage() {
                 <div className="flex flex-col min-h-screen bg-background">
                     {/* Header */}
                     <div
-                        className="flex items-center justify-between p-4 border-b bg-white sticky top-0 z-10 shadow-sm">
+                        className="flex items-center justify-between p-4 border-b bg-(--accent) sticky top-0 z-10 shadow-sm">
                         <Button variant="outline" size="icon-lg" onClick={() => navigate(-1)}>
                             <ArrowLeft/>
                         </Button>

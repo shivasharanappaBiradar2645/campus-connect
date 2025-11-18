@@ -24,7 +24,7 @@ export default function HomePage() {
 
     function TopBarHome() {
         return (
-            <div className="h-fit flex justify-between items-center px-4 py-2 border-b border-gray-300">
+            <div className="h-fit flex justify-between items-center px-4 py-2 border-b border-gray-300 bg-(--accent)">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="text-lg font-semibold">
@@ -38,15 +38,17 @@ export default function HomePage() {
                 </DropdownMenu>
 
                 <div className="flex gap-4 items-center">
-                    <Button variant="outline" size="icon-lg">
-                        <Search/>
-                    </Button>
-                    <Button variant="outline" size="icon-lg">
-                        <MessageCircle/>
-                    </Button>
-                    <Button variant="outline" size="icon-lg">
-                        <Bell/>
-                    </Button>
+                    {/*<Button variant="outline" size="icon-lg">*/}
+                    {/*    <Search/>*/}
+                    {/*</Button>*/}
+                    {/*<Button variant="outline" size="icon-lg">*/}
+                    {/*    <MessageCircle/>*/}
+                    {/*</Button>*/}
+                    {/*<Button variant="outline" size="icon-lg">*/}
+                    {/*    <Bell/>*/}
+                    {/*</Button>*/}
+
+                    <span className={"font-[Header] text-2xl"}>Campus Connect</span>
                 </div>
             </div>
         )

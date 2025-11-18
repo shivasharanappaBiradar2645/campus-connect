@@ -31,12 +31,11 @@ export default function ProfilePage() {
     const [userId, setUserId] = useState()
     const [createPost, setCreatePost] = useState(false)
 
-
     function ProfileTopBar() {
         const navigate = useNavigate();
 
         return (
-            <div className="flex items-center justify-between py-2 px-5 border-b bg-white sticky top-0 ">
+            <div className="flex items-center justify-between py-2 px-5 border-b bg-(--accent) sticky top-0 ">
                 <h1 className="text-xl font-semibold">Profile</h1>
 
                 <Button
