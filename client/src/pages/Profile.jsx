@@ -8,18 +8,71 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-
-const BASE = 'http://localhost:3000'
 import Posts from "@/components/Posts.jsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import Comments from "@/components/Comments.jsx";
+import Create from "@/pages/Create.jsx";
+import {Ghost} from 'lucide-react';
+import {Settings} from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu.jsx";
 
 export default function ProfilePage() {
+    const BASE = 'http://localhost:3000'
     const navigate = useNavigate();
     const [token, setToken] = useState("");
     const [user, setUser] = useState({});
     const [userData, setUserData] = useState();
+    const [createPost, setCreatePost] = useState(false)
+
+
+    function ProfileTopBar() {
+        const navigate = useNavigate();
+
+        return (
+            <div className="flex items-center justify-between py-2 px-5 border-b bg-white sticky top-0 ">
+                <h1 className="text-xl font-semibold">Profile</h1>
+
+                <Button
+                    variant="ghost"
+                    size="icon-lg"
+                    className="hover:bg-gray-100"
+                >
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-lg" className="hover:bg-gray-100">
+                                <Settings className="!size-6"/>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => {
+                                localStorage.clear();
+                                navigate('/auth')
+                            }}>
+                                Log Out
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </Button>
+            </div>
+        );
+    }
+
+    function EmptyProfile() {
+        return (
+            <div className="flex flex-col items-center justify-center py-16 px-8 text-gray-400">
+                <Ghost className="w-20 h-20 mb-4"/>
+                <h2 className="text-lg font-semibold text-center">
+                    Zero content. Impressive… in a sad way
+                </h2>
+            </div>
+        );
+    }
 
     async function getUserProfile() {
         if (token) {
@@ -93,91 +146,96 @@ export default function ProfilePage() {
         }
     }, [token])
 
-    return (
-        <div className="min-h-screen flex flex-col">
-            <div className="flex-grow  flex justify-center">
-                <Card className="w-full max-w-md shadow-md rounded-2xl">
-                    <CardContent className="p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="w-16 h-16">
-                                    <AvatarImage src={user?.imageUrl} alt="Profile"/>
-                                    <AvatarFallback>{user?.username?.split("")[0]}</AvatarFallback>
-                                </Avatar>
-                                <div>
-                                    <h2 className="text-xl font-[header]">{user?.name}</h2>
-                                    <p className="text-sm text-gray-500">{"@" + user?.username + " • " + user?.role} </p>
+
+    if (createPost) {
+        return <Create setCreatePost={setCreatePost}/>
+    } else {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <div className="flex-grow flex-row justify-center">
+                    <ProfileTopBar/>
+                    <Card className="w-full max-w-md shadow-none border-none">
+                        <CardContent className="p-5 py-0">
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="w-16 h-16">
+                                        <AvatarImage src={user?.imageUrl} alt="Profile"/>
+                                        <AvatarFallback>{user?.username?.split("")[0]}</AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <h2 className="text-xl font-[header]">{user?.name}</h2>
+                                        <p className="text-sm text-gray-500">{"@" + user?.username + " • " + user?.role} </p>
+                                    </div>
                                 </div>
+
+                                {/* Edit button */}
+                                <Button variant="outline" size="sm">
+                                    Edit
+                                </Button>
                             </div>
 
-                            {/* Edit button */}
-                            <Button variant="outline" size="sm">
-                                Edit
-                            </Button>
-                        </div>
+                            {/* bio */}
+                            <div className="mt-6 font-[Header] text-xl">
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            </div>
+                        </CardContent>
 
-                        {/* bio */}
-                        <div className="mt-6 font-[Header] text-xl">
-                            {/*<p>{user.email}</p>*/}
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                        </div>
-                    </CardContent>
+                        <Tabs defaultValue="posts" className="w-full">
+                            <TabsList className="w-full flex justify-evenly border-t border-b">
+                                <TabsTrigger value="posts" className="flex-1 p-3 text-center">
+                                    Posts
+                                </TabsTrigger>
+                                <TabsTrigger value="comments" className="flex-1 p-3 text-center">
+                                    Comments
+                                </TabsTrigger>
+                                {/*<TabsTrigger value="votes" className="flex-1 p-3 text-center">*/}
+                                {/*    Votes*/}
+                                {/*</TabsTrigger>*/}
+                            </TabsList>
 
-                    <Tabs defaultValue="posts" className="w-full">
-                        <TabsList className="w-full flex justify-evenly border-t border-b">
-                            <TabsTrigger value="posts" className="flex-1 p-3 text-center">
-                                Posts
-                            </TabsTrigger>
-                            <TabsTrigger value="comments" className="flex-1 p-3 text-center">
-                                Comments
-                            </TabsTrigger>
-                            <TabsTrigger value="votes" className="flex-1 p-3 text-center">
-                                Votes
-                            </TabsTrigger>
-                        </TabsList>
+                            <TabsContent value="posts" className="p-2">
+                                {/* Render posts */}
 
-                        <TabsContent value="posts" className="p-4">
-                            {/* Render posts */}
+                                {userData?.thread.length === 0
+                                    ? <EmptyProfile/>
+                                    : userData?.thread?.map((item, index) => (
+                                        <Posts post={item} key={index} actions={true}/>
+                                    ))
+                                }
 
-                            {userData?.thread.length === 0
-                                ? <p className="text-gray-500">Wow so empty</p>
-                                : userData?.thread?.map((item, index) => (
-                                    <Posts post={item} key={index} actions={true}/>
-                                ))
-                            }
+                            </TabsContent>
 
-                        </TabsContent>
+                            {/*<TabsContent value="comments" className="p-2">*/}
+                            {/*    /!*Render comments *!/*/}
+                            {/*    {userData?.comment.length === 0*/}
+                            {/*        ? <EmptyProfile/>*/}
+                            {/*        : userData?.comment?.map((item, index) => (*/}
+                            {/*            <Comments comment={item} key={index} username={userData?.profile?.username}*/}
+                            {/*                      userImg={userData?.profile?.imageUrl}/>*/}
+                            {/*        ))*/}
+                            {/*    }*/}
+                            {/*</TabsContent>*/}
 
-                        <TabsContent value="comments" className="p-4">
-                            {/*Render comments */}
-                            {userData?.comment.length === 0
-                                ? <p className="text-gray-500">No comments yet.</p>
-                                : userData?.comment?.map((item, index) => (
-                                    <Comments comment={item} key={index} username={userData?.profile?.username}
-                                              userImg={userData?.profile?.imageUrl}/>
-                                ))
-                            }
-                        </TabsContent>
+                            <TabsContent value="votes" className="p-2">
+                                {/* Render votes */}
 
-                        <TabsContent value="votes" className="p-4">
-                            {/* Render votes */}
-
-                            {/*{userData?..length === 0*/}
-                            {/*    ? <p className="text-gray-500">No votes yet.</p>*/}
-                            {/*    : <h1>you have votes</h1>*/}
-                            {/*}*/}
+                                {/*{userData?..length === 0*/}
+                                {/*    ? <p className="text-gray-500">No votes yet.</p>*/}
+                                {/*    : <h1>you have votes</h1>*/}
+                                {/*}*/}
 
 
-                        </TabsContent>
-                    </Tabs>
-                </Card>
+                            </TabsContent>
+                        </Tabs>
+                    </Card>
+                </div>
+
+                {/*spacer*/}
+                <div className="h-[5rem]"/>
+
+                {/* Mobile nav */}
+                <MobileNav setCreatePost={setCreatePost}/>
             </div>
-
-            {/*spacer*/}
-            <div className="h-[5rem]"/>
-
-            {/* Mobile nav */}
-            <MobileNav/>
-        </div>
-    )
+        )
+    }
 }

@@ -217,7 +217,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
 
             <div
                 onClick={() => {
-                    navigate(-1);
+                    navigate(`/post/${post.id}/${pageId}`);
                 }}
                 className="relative max-h-[25em] overflow-hidden ">
 
@@ -260,7 +260,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                         <ArrowBigUp
                             fill={vote === 1 ? "#ff5b34" : "none"}      // inside color
                             stroke={vote === 1 ? "#cc4b2c" : "#000"}   // border color
-                            className="w-6 h-6"
+                            className={0 < vote ? "!size-7" : "!size-6"}
                         />
 
                     </button>
@@ -273,7 +273,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                         <ArrowBigDown
                             fill={vote === -1 ? "#5374E0" : "none"}
                             stroke={vote === -1 ? "#3d56a8" : "#000"}
-                            className="w-6 h-6"
+                            className={0 > vote ? "!size-7" : "!size-6"}
                         />
 
                     </button>

@@ -105,14 +105,14 @@ export const getUserProfileExtended = async (req, res) => {
         }
 
         const {password, ...userWithoutPassword} = userProfile[0];
-        const allthreads = await db.select().from(threads).where(eq(threads.authorId, userId));
-        const allcomments = await db.select().from(comments).where(eq(comments.authorId, userId));
-        const votethreads = await db
+        const allThreads = await db.select().from(threads).where(eq(threads.authorId, userId));
+        const allComments = await db.select().from(comments).where(eq(comments.authorId, userId));
+        const voteThreads = await db
             .select()
             .from(threads)
             .innerJoin(votes, eq(threads.id, votes.threadId))
             .where(eq(votes.userId, userId));
-        const votecomments = await db
+        const voteComments = await db
             .select()
             .from(comments)
             .innerJoin(votes, eq(comments.id, votes.commentId))
@@ -120,10 +120,10 @@ export const getUserProfileExtended = async (req, res) => {
 
         res.status(200).json({
             profile: userWithoutPassword,
-            thread: allthreads,
-            votethreads: votethreads,
-            votecomments: votecomments,
-            comment: allcomments,
+            thread: allThreads,
+            voteThreads: voteThreads,
+            voteComments: voteComments,
+            comment: allComments,
         });
     } catch (e) {
         console.error("Get user profile error:", e);
