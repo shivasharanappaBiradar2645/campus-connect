@@ -19,9 +19,83 @@ export default function PostPage() {
     const [post, setPost] = useState(null);
     const [fetchComments, setFetchComments] = useState(false);
     const [token, setToken] = useState("");
-
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [vote, setVote] = useState(0);
+    const [voteCount, setVoteCount] = useState(0);
+    const [voteData, setVoteData] = useState([]);
+    const [reFetchVotes, setReFetchVotes] = useState(true);
+
+    async function handleUpVote(Id) {
+        try {
+            const res = await fetch(`${BASE}/votes/`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({threadId: Id, type: "upvote"})
+            });
+
+            if (res.ok) {
+                setReFetchVotes(!reFetchVotes);
+            } else if (res.status === 403) {
+                localStorage.clear();
+                navigate("/auth");
+            } else if (res.status === 409) {
+                await handleVoteDelete(Id);
+                setReFetchVotes(!reFetchVotes);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async function handleDownVote(Id) {
+        try {
+            const res = await fetch(`${BASE}/votes/`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({threadId: Id, type: "downvote"})
+            });
+
+            if (res.ok) {
+                setReFetchVotes(!reFetchVotes);
+            } else if (res.status === 403) {
+                localStorage.clear();
+                navigate("/auth");
+            } else if (res.status === 409) {
+                await handleVoteDelete(Id);
+                setReFetchVotes(!reFetchVotes);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    async function handleVoteDelete(Id) {
+        try {
+            const res = await fetch(`${BASE}/votes/${Id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (res.ok) {
+                setReFetchVotes(!reFetchVotes);
+            } else if (res.status === 403) {
+                localStorage.clear();
+                navigate("/auth");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     async function handleSubmitComment() {
         try {
@@ -97,6 +171,42 @@ export default function PostPage() {
         fetchPost()
     }, [id, fetchComments])
 
+    useEffect(() => {
+        async function fetchVotes() {
+            try {
+                const res = await fetch(`${BASE}/votes/${id}`, {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"}
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    setVoteCount(data.upVote - data.downVote);
+                    setVoteData(data.voteThreads);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        fetchVotes();
+    }, [id, reFetchVotes]);
+
+    useEffect(() => {
+        let found = false;
+
+        voteData.map(v => {
+            if (v.userId === post?.authorId) {
+                found = true;
+                v.type === "upvote" ? setVote(1) : setVote(-1);
+            }
+        });
+
+        if (!found) setVote(0);
+    }, [voteData, post, reFetchVotes]);
+
+
     return (
         <>
             {post && comments ? (
@@ -128,36 +238,51 @@ export default function PostPage() {
 
                             {/* Actions */}
                             <div className="flex justify-between items-center text-gray-600 border-t pt-4">
-                                {/* Upvote/Downvote */}
+
+                                {/* Upvote / Downvote */}
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={() => {
-                                            // handleUpVote(post.id)
+                                            handleUpVote(post.id)
                                         }}
                                         className="hover:text-blue-600 transition-colors"
                                     >
-                                        <ArrowBigUp className="w-6 h-6"/>
+                                        <ArrowBigUp
+                                            className="w-6 h-6"
+                                            fill={vote === 1 ? "#ff5b34" : "none"}
+                                            stroke={vote === 1 ? "#cc4b2c" : "#000"}
+                                        />
                                     </button>
-                                    <h1>0</h1>
+
+                                    <h1>{voteCount}</h1>
+
                                     <button
                                         onClick={() => {
-                                            // handleDownVote(post.id)
+                                            handleDownVote(post.id)
                                         }}
                                         className="hover:text-red-500 transition-colors"
                                     >
-                                        <ArrowBigDown className="w-6 h-6"/>
+                                        <ArrowBigDown
+                                            className="w-6 h-6"
+                                            fill={vote === -1 ? "#5374E0" : "none"}
+                                            stroke={vote === -1 ? "#3d56a8" : "#000"}
+                                        />
                                     </button>
                                 </div>
 
                                 {/* Comments */}
                                 <div
-                                    className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors">
+                                    onClick={() => navigate(`/post/${post.id}`)}
+                                    className="flex items-center gap-2 cursor-pointer hover:text-blue-600 transition-colors"
+                                >
                                     <MessageCircle className="w-5 h-5"/>
                                     <span className="text-sm font-medium">
-                                    {comments?.length} Comments
-                                </span>
+                                       {comments.length} Comments
+                                    </span>
                                 </div>
+
                             </div>
+
                         </div>
 
                         {/* Comments Section */}
