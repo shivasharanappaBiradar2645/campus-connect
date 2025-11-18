@@ -10,13 +10,17 @@ import {Button} from "@/components/ui/button"
 import MobileNav from "@/components/Dock.jsx"
 import Posts from "@/components/Posts.jsx"
 import Create from "@/pages/Create.jsx";
+import {useNavigate} from "react-router-dom";
 
 export default function HomePage() {
     const BASE = 'http://localhost:3000'
     const [postData, setPostData] = useState([])
     const [comments, setComments] = useState([])
+    const [token, setToken] = useState("")
     const [fetchPosts, setFetchPosts] = useState(true)
     const [createPost, setCreatePost] = useState(false)
+    const [userId, setUserId] = useState()
+    const navigate = useNavigate();
 
     function TopBarHome() {
         return (
@@ -47,6 +51,34 @@ export default function HomePage() {
             </div>
         )
     }
+
+    useEffect(() => {
+
+        async function getUserId() {
+            try {
+                const res = await fetch(`${BASE}/userId`, {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                })
+                const data = await res.json()
+                if (res.ok) {
+                    // console.log("userId: "+data.userId)
+                    setUserId(data.userId);
+                } else {
+                    console.error(data)
+                }
+            } catch (err) {
+                console.error(err)
+            }
+        }
+
+        if (token) {
+            getUserId()
+        }
+    }, [token])
 
     useEffect(() => {
         async function fetchPost() {
@@ -92,8 +124,21 @@ export default function HomePage() {
         fetchCommentsForAll()
     }, [postData])
 
+    useEffect(() => {
+        const storedToken = localStorage.getItem("authToken");
+        if (!storedToken) {
+            navigate("/auth");
+        } else {
+            setToken(storedToken);
+        }
+    }, [navigate]);
+
+
     //TODO remove after testing
 
+    useEffect(() => {
+        console.log("user Id: " + userId);
+    }, [userId])
     // useEffect(() => {
     //     console.log(comments)
     // }, [comments])
@@ -107,7 +152,6 @@ export default function HomePage() {
     } else {
 
         return (
-
             <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
                 <TopBarHome/>
 
@@ -119,6 +163,7 @@ export default function HomePage() {
                             comments={comments}
                             fetchPosts={fetchPosts}
                             setFetchPosts={setFetchPosts}
+                            userId={userId}
                             actions={false}
                         />
                     ))}

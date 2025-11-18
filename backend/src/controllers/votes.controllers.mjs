@@ -24,7 +24,7 @@ export const createVote = async (req, res) => {
         );
 
         if (existingVote.length > 0) {
-            return res.status(409).json({error: "User has already voted on this item"});
+            return res.status(409).json({message: "User has already voted on this item"});
         }
 
         const newVote = await db.insert(votes).values({
@@ -46,42 +46,46 @@ export const deleteVote = async (req, res) => {
         const {id} = req.params;
         const userId = req.user.id;
 
-        const vote = await db.select().from(votes).where(eq(votes.id, id));
+        const vote = await db
+            .select()
+            .from(votes)
+            .where(and(eq(votes.threadId, id), eq(votes.userId, userId)));
 
         if (vote.length === 0) {
-            return res.status(404).json({error: "Vote not found"});
-        }
-
-        if (vote[0].userId !== userId) {
             return res.status(403).json({error: "You are not authorized to delete this vote"});
         }
 
-        await db.delete(votes).where(eq(votes.id, id));
+        await db
+            .delete(votes)
+            .where(and(eq(votes.threadId, id), eq(votes.userId, userId)));
 
-        res.status(200).json({message: "Vote deleted successfully"});
+        return res.status(200).json({message: "Vote deleted successfully"});
+
     } catch (e) {
         console.error("Delete vote error:", e);
-        res.status(500).json({error: e});
+        return res.status(500).json({error: e});
     }
 };
+
 
 export const countVote = async (req, res) => {
     try {
         const {id} = req.params;
         const upvote = await db.$count(votes, and(eq(votes.threadId, id), eq(votes.type, "upvote")));
-        const downvote = await db.$count(votes, and(eq(votes.threadId, id), eq(votes.type, "downvote")));
+        const downVote = await db.$count(votes, and(eq(votes.threadId, id), eq(votes.type, "downvote")));
 
-        const votethreads = await db
+        const voteThreads = await db
             .select({
                 threadId: votes.threadId,
                 commentId: votes.commentId,
+                userId: votes.userId,
                 type: votes.type
             })
             .from(threads)
             .innerJoin(votes, eq(threads.id, votes.threadId))
-            .where(eq(votes.userId, id));
+            .where(eq(votes.threadId, id));
 
-        res.json({upVote: upvote, downVote: downvote, voteThreads: votethreads});
+        res.json({upVote: upvote, downVote: downVote, voteThreads: voteThreads});
 
     } catch (e) {
         res.status(500).json({error: e.message})

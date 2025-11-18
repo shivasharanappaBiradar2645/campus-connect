@@ -10,9 +10,8 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
-import ReactHtmlParser, {processNodes, convertNodeToElement, htmlparser2} from 'react-html-parser';
 
-export default function Posts({post, comments, fetchPosts, setFetchPosts, actions}) {
+export default function Posts({post, comments, fetchPosts, setFetchPosts, actions, userId}) {
     const BASE = 'http://localhost:3000'
     const [postComments, setPostComments] = useState([]);
     const [voteCount, setVoteCount] = useState(0);
@@ -21,7 +20,8 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
     const navigate = useNavigate();
     const location = useLocation();
     const [pageId, setPageId] = useState(1);
-
+    const [vote, setVote] = useState(0);
+    const [voteData, setVoteData] = useState([]);
 
     async function fetchVoteCount(Id) {
         try {
@@ -31,9 +31,10 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
             })
             const data = await res.json()
             if (res.ok) {
-                setVoteCount(data.upvote - data.downvote);
-                console.log("vote count");
-                console.log(data);
+                setVoteCount(data.upVote - data.downVote);
+                setVoteData(data.voteThreads)
+                console.log(data)
+
             } else {
                 console.error(data)
             }
@@ -52,6 +53,36 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                 },
                 body: JSON.stringify({threadId: Id, type: "upvote"})
             })
+
+
+            const data = await res.json()
+            if (res.ok) {
+                setReFetch(!reFetch)
+            } else if (res.status === 403) {
+                localStorage.clear()
+                navigate("/auth")
+            } else if (res.status === 409) {
+                await handleVoteDelete(Id)
+                setReFetch(!reFetch)
+            } else {
+                console.error(data);
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    async function handleDownVote(Id) {
+        try {
+            const res = await fetch(`${BASE}/votes/`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({threadId: Id, type: "downvote"})
+            })
+
             const data = await res.json()
 
             if (res.ok) {
@@ -60,6 +91,9 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
             } else if (res.status === 403) {
                 localStorage.clear()
                 navigate("/auth")
+            } else if (res.status === 409) {
+                await handleVoteDelete(Id)
+                setReFetch(!reFetch)
             } else {
                 console.error(data);
             }
@@ -69,7 +103,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
         }
     }
 
-    async function handleDownVote(Id) {
+    async function handleVoteDelete(Id) {
         try {
             const res = await fetch(`${BASE}/votes/${Id}`, {
                 method: "DELETE",
@@ -81,7 +115,6 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
             const data = await res.json()
 
             if (res.ok) {
-                // console.log(data);
                 setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()
@@ -138,6 +171,20 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
         fetchVoteCount(post.id)
     }, [post, reFetch])
 
+    useEffect(() => {
+        let foundVote = 0;
+
+        voteData.forEach((item) => {
+            if (item.userId === userId) {
+
+                console.log("type: " + item.type);
+                console.log("id: " + item.id);
+                foundVote = item.type === "upvote" ? 1 : -1;
+            }
+        })
+
+        setVote(foundVote);
+    }, [voteData, userId, reFetch]);
 
     useEffect(() => {
         if (location.pathname === "/") {
@@ -147,18 +194,21 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
         }
     }, [location.pathname]);
 
-
     //TESTING PURPOSE ONLY
 
     // console.log("postComments:", postComments);
     // useEffect(() => {
     //     console.log("token: " + token);
     // }, [token]);
-    //
-    // useEffect(() => {
-    //     console.log("vote: " + voteCount)
-    // }, [voteCount]);
-    //
+
+    useEffect(() => {
+        console.log(vote)
+    }, [vote]);
+
+    useEffect(() => {
+        console.log(voteData)
+    }, [voteData]);
+
 
     return (
         <div
@@ -167,7 +217,7 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
 
             <div
                 onClick={() => {
-                    navigate(`/post/${post.id}/${pageId}`);
+                    navigate(-1);
                 }}
                 className="relative max-h-[25em] overflow-hidden ">
 
@@ -207,7 +257,12 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                             handleUpVote(post.id)
                         }}
                         className="hover:text-orange-600 transition-colors">
-                        <ArrowBigUp className="w-6 h-6"/>
+                        <ArrowBigUp
+                            fill={vote === 1 ? "#ff5b34" : "none"}      // inside color
+                            stroke={vote === 1 ? "#cc4b2c" : "#000"}   // border color
+                            className="w-6 h-6"
+                        />
+
                     </button>
                     <h1>{voteCount}</h1>
                     <button
@@ -215,7 +270,12 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                             handleDownVote(post.id)
                         }}
                         className="hover:text-blue-500 transition-colors">
-                        <ArrowBigDown className="w-6 h-6"/>
+                        <ArrowBigDown
+                            fill={vote === -1 ? "#5374E0" : "none"}
+                            stroke={vote === -1 ? "#3d56a8" : "#000"}
+                            className="w-6 h-6"
+                        />
+
                     </button>
                 </div>
 
