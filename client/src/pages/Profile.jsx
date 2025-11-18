@@ -28,6 +28,7 @@ export default function ProfilePage() {
     const [token, setToken] = useState("");
     const [user, setUser] = useState({});
     const [userData, setUserData] = useState();
+    const [userId, setUserId] = useState()
     const [createPost, setCreatePost] = useState(false)
 
 
@@ -130,6 +131,27 @@ export default function ProfilePage() {
         }
     }
 
+    async function getUserId() {
+        try {
+            const res = await fetch(`${BASE}/userId`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+            })
+            const data = await res.json()
+            if (res.ok) {
+                // console.log("userId: "+data.userId)
+                setUserId(data.userId);
+            } else {
+                console.error(data)
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     useEffect(() => {
         const storedToken = localStorage.getItem("authToken");
         if (!storedToken) {
@@ -141,6 +163,7 @@ export default function ProfilePage() {
 
     useEffect(() => {
         if (token) {
+            getUserId()
             getUserProfile();
             getUserProfileExtended();
         }
@@ -158,7 +181,7 @@ export default function ProfilePage() {
                         <CardContent className="p-5 py-0">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-4">
-                                    <Avatar className="w-16 h-16">
+                                    <Avatar className="w-16 h-16 border-1">
                                         <AvatarImage src={user?.imageUrl} alt="Profile"/>
                                         <AvatarFallback>{user?.username?.split("")[0]}</AvatarFallback>
                                     </Avatar>
@@ -199,32 +222,20 @@ export default function ProfilePage() {
                                 {userData?.thread.length === 0
                                     ? <EmptyProfile/>
                                     : userData?.thread?.map((item, index) => (
-                                        <Posts post={item} key={index} actions={true}/>
+                                        <Posts post={item} key={index} actions={true} userId={userId}/>
                                     ))
                                 }
 
                             </TabsContent>
 
-                            {/*<TabsContent value="comments" className="p-2">*/}
-                            {/*    /!*Render comments *!/*/}
-                            {/*    {userData?.comment.length === 0*/}
-                            {/*        ? <EmptyProfile/>*/}
-                            {/*        : userData?.comment?.map((item, index) => (*/}
-                            {/*            <Comments comment={item} key={index} username={userData?.profile?.username}*/}
-                            {/*                      userImg={userData?.profile?.imageUrl}/>*/}
-                            {/*        ))*/}
-                            {/*    }*/}
-                            {/*</TabsContent>*/}
-
-                            <TabsContent value="votes" className="p-2">
-                                {/* Render votes */}
-
-                                {/*{userData?..length === 0*/}
-                                {/*    ? <p className="text-gray-500">No votes yet.</p>*/}
-                                {/*    : <h1>you have votes</h1>*/}
-                                {/*}*/}
-
-
+                            <TabsContent value="comments" className="p-2">
+                                {/*Render comments */}
+                                {userData?.comment.length === 0
+                                    ? <EmptyProfile/>
+                                    : userData?.comment?.map((item, index) => (
+                                        <Comments comment={item} key={index} authorId={item.authorId}/>
+                                    ))
+                                }
                             </TabsContent>
                         </Tabs>
                     </Card>

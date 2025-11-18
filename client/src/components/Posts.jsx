@@ -86,7 +86,6 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
             const data = await res.json()
 
             if (res.ok) {
-                // console.log(data);
                 setReFetch(!reFetch)
             } else if (res.status === 403) {
                 localStorage.clear()
@@ -177,8 +176,6 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
         voteData.forEach((item) => {
             if (item.userId === userId) {
 
-                console.log("type: " + item.type);
-                console.log("id: " + item.id);
                 foundVote = item.type === "upvote" ? 1 : -1;
             }
         })
@@ -201,13 +198,13 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
     //     console.log("token: " + token);
     // }, [token]);
 
-    useEffect(() => {
-        console.log(vote)
-    }, [vote]);
-
-    useEffect(() => {
-        console.log(voteData)
-    }, [voteData]);
+    // useEffect(() => {
+    //     console.log(vote)
+    // }, [vote]);
+    //
+    // useEffect(() => {
+    //     console.log(voteData)
+    // }, [voteData]);
 
 
     return (
@@ -258,8 +255,8 @@ export default function Posts({post, comments, fetchPosts, setFetchPosts, action
                         }}
                         className="hover:text-orange-600 transition-colors">
                         <ArrowBigUp
-                            fill={vote === 1 ? "#ff5b34" : "none"}      // inside color
-                            stroke={vote === 1 ? "#cc4b2c" : "#000"}   // border color
+                            fill={vote === 1 ? "#ff5b34" : "none"}
+                            stroke={vote === 1 ? "#cc4b2c" : "#000"}
                             className={0 < vote ? "!size-7" : "!size-6"}
                         />
 
