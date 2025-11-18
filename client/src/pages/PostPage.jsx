@@ -13,7 +13,7 @@ import {SendHorizontal} from 'lucide-react';
 
 export default function PostPage() {
     const navigate = useNavigate();
-    const BASE = 'https://campus-connect-98bf.onrender.com'
+    const BASE = 'http://localhost:3000'
     const {id, pageId} = useParams();
     const [prevPage, setPrevPage] = useState("");
     const [post, setPost] = useState(null);

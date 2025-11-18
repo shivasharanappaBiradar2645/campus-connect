@@ -12,7 +12,7 @@ import Posts from "@/components/Posts.jsx"
 import Create from "@/pages/Create.jsx";
 
 export default function HomePage() {
-    const BASE = 'https://campus-connect-98bf.onrender.com'
+    const BASE = 'http://localhost:3000'
     const [postData, setPostData] = useState([])
     const [comments, setComments] = useState([])
     const [fetchPosts, setFetchPosts] = useState(true)

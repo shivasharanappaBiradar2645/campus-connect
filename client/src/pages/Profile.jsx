@@ -9,7 +9,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 
-const BASE = 'https://campus-connect-98bf.onrender.com'
+const BASE = 'http://localhost:3000'
 import Posts from "@/components/Posts.jsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";

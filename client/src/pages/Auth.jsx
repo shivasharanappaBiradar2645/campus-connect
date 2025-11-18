@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import { jwtDecode } from 'jwt-decode'
 
-export default function Auth({setAuthorId}) {
+export default function Auth() {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ export default function Auth({setAuthorId}) {
     const [loading, setLoading] = useState(false);
     const [token, setToken] = useState("");
 
-    const API_BASE_URL = 'https://campus-connect-98bf.onrender.com';
+    const API_BASE_URL = 'http://localhost:3000';
 
     const handleInputChange = (e) => {
         setFormData({
@@ -95,7 +95,6 @@ export default function Auth({setAuthorId}) {
 
                 const user = jwtDecode(token);
                 console.log(user);
-                setAuthorId(user?.id);
 
                 setSuccess('Login successful!');
 

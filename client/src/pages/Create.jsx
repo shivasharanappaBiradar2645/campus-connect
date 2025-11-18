@@ -73,7 +73,7 @@ function TextEditor({editorInstance, editorId}) {
 }
 
 export default function Create({setCreatePost}) {
-    const BASE = 'https://campus-connect-98bf.onrender.com'
+    const BASE = 'http://localhost:3000'
     const [token, setToken] = useState("");
     const navigate = useNavigate();
 
