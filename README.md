@@ -97,3 +97,6 @@ The project is organized into two main parts: a `backend` folder for the server-
 │   │   └── ...
 └── README.md
 ```
+
+## Project Report
+[Project Report Link](https://docs.google.com/document/d/1VODrTef5AD6aEHiFLciMuG1BW84L3T48/edit?usp=sharing&ouid=106539620862714888600&rtpof=true&sd=true)
